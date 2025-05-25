@@ -6,12 +6,12 @@ const emailsRouter = require('./routes/emails');
 const residentsRouter = require('./routes/residents');
 const assessmentRouter = require('./routes/assessment');
 const medicationsRouter = require('./routes/medications');
-const activityLogRouter = require('./routes/activitylog'); // <-- ADD THIS LINE
+const activityLogRouter = require('./routes/activitylog');
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 // Print __dirname and static path to help debug directory issues
 console.log('__dirname:', __dirname);
@@ -48,7 +48,7 @@ app.use('/api/assessments', assessmentRouter);
 app.use('/api/medications', medicationsRouter);
 
 // API route for activity log
-app.use('/api/activity-log', activityLogRouter); // <-- ADD THIS LINE
+app.use('/api/activity-log', activityLogRouter);
 
 // Simple DB test route (for debugging connection)
 app.get('/test-db', async (req, res) => {
