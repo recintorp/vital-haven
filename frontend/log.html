@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VitalHaven Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #4c7c2d;
+      --primary-light: #cfe7a8;
+      --primary-lighter: #eef3cd;
+      --secondary-color: #f6f8e3;
+      --background-color: #fefbf6;
+      --card-color: #fefee5;
+      --text-dark: #333;
+      --text-light: #555;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #dff5e1 0%, #f7f2eb 50%, #d0e0d0 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .wrapper {
+      width: 1100px;
+      max-width: 100%;
+      background-color: var(--card-color);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      min-height: 80vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: var(--secondary-color);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: width 0.3s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 12px;
+    }
+
+    .logo-container img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo span:first-child {
+      color: var(--primary-color);
+      font-weight: 800;
+    }
+
+    .logo span:last-child {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .menu-item {
+      margin: 8px 0;
+      font-size: 15px;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 15px;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .menu-item span:first-child {
+      font-weight: 600;
+    }
+
+    .menu-item span:last-child {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .menu-item:hover span:last-child,
+    .menu-item.active span:last-child {
+      color: inherit;
+    }
+
+    .spacer {
+      height: 20px;
+    }
+
+    .bottom-icons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .bottom-icons img {
+      width: 80px;
+      height: auto;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .bottom-icons img:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 30px 35px;
+      background-color: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+    }
+
+    .top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .top-left h1 {
+      margin: 0;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .top-left h1 img {
+      height: 42px;
+      width: auto;
+    }
+
+    .search-container {
+      position: relative;
+      flex-grow: 1;
+      max-width: 300px;
+    }
+
+    .search {
+      background: var(--primary-lighter);
+      border: none;
+      padding: 10px 15px 10px 40px;
+      border-radius: var(--border-radius-sm);
+      width: 100%;
+      font-size: 14px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid var(--primary-light);
+    }
+
+    .profile img:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+    }
+
+    /* Logs Container Styles */
+    .logs-container {
+      margin-top: 25px;
+      background-color: var(--primary-lighter);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: var(--primary-light);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .logs-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .logs-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Log Items Styles */
+    .logs-content {
+      padding: 20px;
+      overflow-y: auto;
+      max-height: 60vh;
+    }
+
+    .log-item {
+      padding: 15px;
+      margin-bottom: 12px;
+      background-color: white;
+      border-radius: var(--border-radius-sm);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .log-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .log-staff {
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 15px;
+    }
+
+    .log-activity {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .log-timestamp {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .log-details {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-top: 8px;
+      padding-left: 10px;
+      border-left: 2px solid var(--primary-light);
+    }
+
+    .empty-logs {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-size: 16px;
+    }
+
+    .loading-logs {
+      text-align: center;
+      padding: 40px;
+      color: var(--primary-color);
+      font-size: 16px;
+    }
+
+    /* Action Buttons */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: var(--border-radius-sm);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      border: none;
+      box-shadow: var(--shadow-sm);
+      gap: 6px;
+    }
+
+    .action-btn i {
+      font-size: 14px;
+    }
+
+    .action-btn.primary {
+      background-color: var(--primary-color);
+    }
+
+    .action-btn.secondary {
+      background-color: #6c757d;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      opacity: 0.9;
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Admin Dropdown */
+    .admin-dropdown {
+      position: relative;
+      display: inline-block;
+      font-size: 16px;
+      color: var(--text-dark);
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .admin-dropdown .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      box-shadow: var(--shadow-md);
+      border-radius: var(--border-radius-sm);
+      min-width: 150px;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .admin-dropdown .dropdown-menu a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: var(--transition);
+    }
+
+    .admin-dropdown .dropdown-menu a:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .admin-dropdown:hover .dropdown-menu {
+      display: block;
+    }
+
+    .admin-name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .admin-name strong {
+      color: var(--primary-color);
+    }
+
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .loader-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .loader-gif {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .loader-text {
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .wrapper {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 15px;
+      }
+
+      .logo-container {
+        margin-bottom: 15px;
+      }
+
+      .menu-item {
+        margin: 5px 0;
+        padding: 8px 10px;
+      }
+
+      .main {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .search-container {
+        max-width: 100%;
+        width: 100%;
+        order: 2;
+      }
+
+      .profile {
+        order: 1;
+        align-self: flex-end;
+      }
+    }
+
+    @media (max-width: 576px) {
+      body {
+        padding: 20px;
+      }
+
+      .logs-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .logs-controls {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Loader Overlay -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <img src="images/blob.gif" alt="Loading..." class="loader-gif" />
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <div class="wrapper">
+    <div class="sidebar">
+      <div>
+        <!-- Logo + Text -->
+        <div class="logo-container">
+          <img src="images/logo.png" alt="Logo">
+          <div class="logo">
+            <span>Vital</span>
+            <span>Haven</span>
+          </div>
+        </div>
+        <a href="Overview.html" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Data</span>
+            <span>Overview</span>
+          </div>
+        </a>
+        <a href="CaregiverLogs.html" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Caregiver</span>
+            <span>Access Log</span>
+          </div>
+        </a>
+        <a href="Residents.html" id="residentLink" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Resident</span>
+            <span>Summary Panel</span>
+          </div>
+        </a>
+        <a href="settings.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Settings</span>
+          </div>
+        </a>
+        <div class="spacer"></div>
+        <div class="menu-item active">
+          <span>Logs</span>
+        </div>
+        <a href="Inbox.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Inbox</span>
+          </div>
+        </a>
+      </div>
+      <div class="bottom-icons">
+        <img src="images/blob1.gif" alt="Blob Icon"/>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="top-bar">
+        <div class="top-left">
+          <div class="admin-dropdown">
+            <span class="admin-name">Hi <strong>Admin</strong> <i class="fas fa-caret-down"></i></span>
+            <div class="dropdown-menu">
+              <a href="#" id="signOutLink"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+            </div>
+          </div>
+          <h1>System Logs <img src="images/plant1.gif" alt="Plant"/></h1>
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input class="search" type="text" placeholder="Search logs..." id="logSearchInput"/>
+          </div>
+        </div>
+        <div class="profile">
+          <a href="profile.html">
+            <img src="images/profile.png" alt="Profile"/>
+          </a>
+        </div>
+      </div>
+
+      <!-- Logs Section -->
+      <div class="logs-container">
+        <div class="logs-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div class="logs-title" style="font-size: 22px; font-weight: 600; color: #4c7c2d;">Activity Logs</div>
+          <div class="logs-controls" style="display: flex; gap: 12px;">
+            <button class="action-btn primary" id="refreshLogs" style="background: #7ba757; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-weight: 600; cursor: pointer;">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button class="action-btn secondary" id="exportLogs" style="background: #eef3cd; border: none; color: #4c7c2d; border-radius: 8px; padding: 8px 18px; font-weight: 600; cursor: pointer;">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+        </div>
+        <div class="logs-content" id="logListContainer" style="background: #f7f9d7; border-radius: 10px; padding: 18px; min-height: 300px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); overflow-y: auto; max-height: 500px;">
+          <div class="loading-logs" style="color: #888;"><i class="fas fa-spinner fa-spin"></i> Loading system logs...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DARK MODE LOADER -->
+  <script>
+    // On load, apply dark mode if enabled in localStorage
+    if (localStorage.getItem('vh-darkmode') === '1') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+  <style>
+    /* DARK MODE OVERRIDES */
+    body.dark-mode {
+      --primary-color: #90ee90;
+      --primary-light: #253c25;
+      --primary-lighter: #24282e;
+      --secondary-color: #23282d;
+      --background-color: #181c1f;
+      --card-color: #23282d;
+      --text-dark: #f1f1f1;
+      --text-light: #bbbbbb;
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.7);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.8);
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #181c1f 0%, #23282d 50%, #181c1f 100%);
+    }
+    body.dark-mode .wrapper,
+    body.dark-mode .main {
+      background: var(--background-color);
+      color: var(--text-dark);
+    }
+    body.dark-mode .sidebar {
+      background-color: var(--secondary-color);
+    }
+    body.dark-mode .logo span:last-child {
+      color: var(--text-light);
+    }
+    body.dark-mode .menu-item {
+      color: var(--text-dark);
+    }
+    body.dark-mode .menu-item.active,
+    body.dark-mode .menu-item:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+    body.dark-mode .main {
+      background-color: var(--background-color);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .search,
+    body.dark-mode input[type="text"],
+    body.dark-mode input[type="password"],
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background-color: #23282d;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    body.dark-mode .search:focus,
+    body.dark-mode input[type="text"]:focus,
+    body.dark-mode input[type="password"]:focus,
+    body.dark-mode select:focus,
+    body.dark-mode textarea:focus {
+      border-color: #90ee90;
+      box-shadow: 0 0 0 2px #253c25;
+    }
+    body.dark-mode .logs-container {
+      background: #24282e;
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .logs-content {
+      background: #23282d !important;
+      color: var(--text-dark);
+    }
+    body.dark-mode .log-item {
+      background: #23282d;
+      color: var(--text-dark);
+      border-left: 4px solid #90ee90;
+      box-shadow: var(--shadow-sm);
+    }
+    body.dark-mode .log-item:hover {
+      background: #253c25;
+      box-shadow: var(--shadow-lg);
+    }
+    body.dark-mode .log-header .log-staff {
+      color: #90ee90 !important;
+    }
+    body.dark-mode .log-header .log-activity {
+      color: #fff;
+    }
+    body.dark-mode .log-timestamp {
+      color: #bbbbbb;
+    }
+    body.dark-mode .log-details {
+      color: #bbbbbb;
+      border-left: 2px solid #253c25;
+    }
+    body.dark-mode .empty-logs {
+      color: #bbbbbb !important;
+    }
+    body.dark-mode .loading-logs {
+      color: #90ee90 !important;
+    }
+    body.dark-mode .action-btn.primary {
+      background-color: #90ee90;
+      color: #181c1f;
+    }
+    body.dark-mode .action-btn.secondary {
+      background-color: #43484e;
+      color: #fff;
+    }
+    body.dark-mode .action-btn:hover {
+      opacity: 1;
+      box-shadow: var(--shadow-lg);
+    }
+    body.dark-mode .admin-dropdown .dropdown-menu {
+      background: #23282d;
+      color: #fff;
+    }
+    body.dark-mode .admin-dropdown .dropdown-menu a {
+      color: #f1f1f1;
+    }
+    body.dark-mode .admin-dropdown .dropdown-menu a:hover {
+      background-color: #253c25;
+      color: #90ee90;
+    }
+    body.dark-mode .loader-overlay {
+      background-color: rgba(24, 28, 31, 0.95);
+    }
+    body.dark-mode .loader-text {
+      color: #90ee90;
+    }
+    body.dark-mode .bottom-icons img {
+      filter: brightness(0.7);
+    }
+  </style>
+
+  <script>
+    // Navigation loading overlay logic
+    document.querySelectorAll('a.menu-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetUrl = this.getAttribute('href');
+        document.getElementById('loaderOverlay').classList.add('show');
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 800);
+      });
+    });
+
+    document.getElementById('residentLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetUrl = this.getAttribute('href');
+      document.getElementById('loaderOverlay').classList.add('show');
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 800);
+    });
+
+    document.getElementById('signOutLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('loaderOverlay').classList.add('show');
+      setTimeout(() => {
+        window.location.href = 'Login.html';
+      }, 800);
+    });
+
+    // Log fetch and display logic
+    async function fetchAndRenderLogs(filter = '') {
+      const logListContainer = document.getElementById('logListContainer');
+      logListContainer.innerHTML = `
+        <div class="loading-logs" style="color:#888;">
+          <i class="fas fa-spinner fa-spin"></i> Loading system logs...
+        </div>
+      `;
+      
+      try {
+        const res = await fetch('/api/activity-log');
+        if (!res.ok) throw new Error('Failed to fetch logs');
+        const logs = await res.json();
+        
+        let filteredLogs = logs;
+        if (filter && filter.trim()) {
+          const f = filter.trim().toLowerCase();
+          filteredLogs = logs.filter(log =>
+            (log.StaffNumber && log.StaffNumber.toLowerCase().includes(f)) ||
+            (log.Activity && log.Activity.toLowerCase().includes(f)) ||
+            (log.Details && log.Details.toLowerCase().includes(f)) ||
+            (log.Timestamp && new Date(log.Timestamp).toLocaleString().toLowerCase().includes(f))
+          );
+        }
+        
+        if (!filteredLogs.length) {
+          logListContainer.innerHTML = '<div class="empty-logs" style="color:#888;padding:32px;text-align:center;">No logs found matching your criteria.</div>';
+          return;
+        }
+        
+        logListContainer.innerHTML = filteredLogs.map(log => `
+          <div class="log-item" style="border-bottom:1px solid #e4e8c7;padding:15px 0;">
+            <div class="log-header" style="display: flex; justify-content: space-between; align-items: baseline;">
+              <div>
+                <span class="log-staff" style="color:#7ba757;font-weight:600;">${log.StaffNumber || 'System'}</span>
+                <span class="log-activity" style="color:#333;font-weight:500;margin-left:7px;">${log.Activity || 'Activity'}</span>
+              </div>
+              <div class="log-timestamp" style="font-size:12px;color:#888;">
+                <i class="far fa-clock"></i> ${new Date(log.Timestamp).toLocaleString()}
+              </div>
+            </div>
+            ${log.Details ? `<div class="log-details" style="margin-left:14px;color:#444;font-size:14px;margin-top:3px;">${log.Details}</div>` : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        logListContainer.innerHTML = `
+          <div class="empty-logs" style="color: #d9534f; padding:32px;">
+            <i class="fas fa-exclamation-triangle"></i> Failed to load logs. Please try again later.
+          </div>
+        `;
+        console.error('Error loading logs:', e);
+      }
+    }
+
+    // Search filter logic
+    document.getElementById('logSearchInput').addEventListener('input', function() {
+      fetchAndRenderLogs(this.value);
+    });
+
+    // Refresh button
+    document.getElementById('refreshLogs').addEventListener('click', function() {
+      fetchAndRenderLogs(document.getElementById('logSearchInput').value);
+    });
+
+    // Export button (basic implementation)
+    document.getElementById('exportLogs').addEventListener('click', async function() {
+      try {
+        const res = await fetch('/api/activity-log');
+        if (!res.ok) throw new Error('Failed to fetch logs for export');
+        const logs = await res.json();
+        
+        // Simple CSV export
+        const headers = ['Timestamp', 'Staff Number', 'Activity', 'Details'];
+        const csvRows = [
+          headers.join(','),
+          ...logs.map(log => 
+            `"${new Date(log.Timestamp).toLocaleString()}","${log.StaffNumber || ''}","${log.Activity || ''}","${(log.Details || '').replace(/"/g, '""')}"`
+          )
+        ];
+        
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `vitalhaven-logs-${new Date().toISOString().slice(0,10)}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (e) {
+        alert('Failed to export logs. Please try again later.');
+        console.error('Export error:', e);
+      }
+    });
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchAndRenderLogs();
+      setTimeout(() => {
+        document.getElementById('loaderOverlay').classList.remove('show');
+      }, 800);
+    });
+  </script>
+</body>
+</html>

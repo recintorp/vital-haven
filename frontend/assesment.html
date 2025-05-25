@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VitalHaven - Health Assessment</title>
+  <style>
+    :root {
+      --primary-color: #4c7c2d;
+      --primary-light: #cfe7a8;
+      --primary-lighter: #eef3cd;
+      --secondary-color: #f6f8e3;
+      --background-color: #fefbf6;
+      --card-color: #fefee5;
+      --text-dark: #333;
+      --text-light: #555;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --transition: all 0.3s ease;
+      --status-pending: #ff9800;
+      --status-completed: #4caf50;
+      --status-missed: #f44336;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #dff5e1 0%, #f7f2eb 50%, #d0e0d0 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .wrapper {
+      width: 1100px;
+      max-width: 100%;
+      background-color: var(--card-color);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      min-height: 80vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: var(--secondary-color);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: width 0.3s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 12px;
+    }
+
+    .logo-container img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo span:first-child {
+      color: var(--primary-color);
+      font-weight: 800;
+    }
+
+    .logo span:last-child {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .menu-item {
+      margin: 8px 0;
+      font-size: 15px;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 15px;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .menu-item span:first-child {
+      font-weight: 600;
+    }
+
+    .menu-item span:last-child {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .menu-item:hover span:last-child,
+    .menu-item.active span:last-child {
+      color: inherit;
+    }
+
+    .spacer {
+      height: 20px;
+    }
+
+    .bottom-icons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .bottom-icons img {
+      width: 80px;
+      height: auto;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .bottom-icons img:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 30px 35px;
+      background-color: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+    }
+
+    .top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .top-left h1 {
+      margin: 0;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .top-left h1 img {
+      height: 42px;
+      width: auto;
+    }
+
+    .search-container {
+      position: relative;
+      flex-grow: 1;
+      max-width: 300px;
+    }
+
+    .search {
+      background: var(--primary-lighter);
+      border: none;
+      padding: 10px 15px 10px 40px;
+      border-radius: var(--border-radius-sm);
+      width: 100%;
+      font-size: 14px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid var(--primary-light);
+    }
+
+    .profile img:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+    }
+
+    /* Assessment Styles */
+    .assessment-container {
+      margin-top: 25px;
+      background-color: var(--primary-lighter);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .assessment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: var(--primary-light);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .assessment-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .assessment-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Form Styles */
+    .form-container {
+      padding: 20px;
+      background-color: white;
+      flex-grow: 1;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius-sm);
+      font-size: 14px;
+      transition: var(--transition);
+      background-color: white;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .select-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 1em;
+    }
+
+    .textarea-control {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    /* Log Styles */
+    .log-container {
+      margin-top: 30px;
+      background-color: white;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .log-header {
+      padding: 15px 20px;
+      background-color: var(--primary-light);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .log-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .log-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: var(--transition);
+    }
+
+    .log-item:hover {
+      background-color: rgba(207, 231, 168, 0.3);
+    }
+
+    .log-item:last-child {
+      border-bottom: none;
+    }
+
+    .log-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .log-resident {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .log-date {
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    .log-content {
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* Button Styles */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: var(--border-radius-sm);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      border: none;
+      box-shadow: var(--shadow-sm);
+      gap: 6px;
+    }
+
+    .action-btn i {
+      font-size: 14px;
+    }
+
+    .action-btn.add {
+      background-color: var(--primary-color);
+    }
+
+    .action-btn.edit {
+      background-color: #5a8a3a;
+    }
+
+    .action-btn.delete {
+      background-color: #d9534f;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      opacity: 0.9;
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-lg);
+      width: 90%;
+      max-width: 600px;
+      padding: 25px;
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .modal-overlay.show .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--primary-color);
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--border-radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 1001;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast i {
+      font-size: 20px;
+    }
+
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .loader-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .loader-gif {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .loader-text {
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .wrapper {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 15px;
+      }
+
+      .logo-container {
+        margin-bottom: 15px;
+      }
+
+      .menu-item {
+        margin: 5px 0;
+        padding: 8px 10px;
+      }
+
+      .main {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .search-container {
+        max-width: 100%;
+        width: 100%;
+        order: 2;
+      }
+
+      .profile {
+        order: 1;
+        align-self: flex-end;
+      }
+
+      .assessment-controls {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      body {
+        padding: 20px;
+      }
+
+      .action-btn {
+        width: 100%;
+        padding: 10px;
+      }
+
+      .modal {
+        width: 95%;
+        padding: 15px;
+      }
+
+      .toast {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        width: auto;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastNotification">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Assessment saved successfully!</span>
+  </div>
+
+  <!-- Loader Overlay -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <img src="images/blob.gif" alt="Loading..." class="loader-gif" />
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <!-- View Assessment Modal -->
+  <div class="modal-overlay" id="viewAssessmentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Assessment Details</div>
+        <button class="modal-close" id="closeViewModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Resident</label>
+          <input type="text" class="form-control" id="viewResidentName" readonly>
+        </div>
+        <div class="form-group">
+          <label>Date & Time</label>
+          <input type="text" class="form-control" id="viewAssessmentDate" readonly>
+        </div>
+        <div class="form-group">
+          <label>Assessment Notes</label>
+          <textarea class="form-control" id="viewAssessmentNotes" rows="10" readonly></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn delete" id="closeViewAssessment">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <div class="sidebar">
+      <div>
+        <div class="logo-container">
+          <img src="images/logo.png" alt="Logo">
+          <div class="logo">
+            <span>Vital</span>
+            <span>Haven</span>
+          </div>
+        </div>
+        <a href="cgdashboard.html" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Caregiver</span>
+            <span>Dashboard</span>
+          </div>
+        </a>
+        <a href="assignedres.html" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Assigned</span>
+            <span>Residents</span>
+          </div>
+        </a>
+        <a href="medtrck.html" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Medication</span>
+            <span>Tracker</span>
+          </div>
+        </a>
+        <div class="menu-item active">
+          <span>Health</span>
+          <span>Assessment Report</span>
+        </div>
+        <div class="spacer"></div>
+        <a href="settingsv2.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Settings</span>
+          </div>
+        </a>
+      </div>
+      <div class="bottom-icons">
+        <img src="images/blob1.gif" alt="Blob Icon"/>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="top-bar">
+        <div class="top-left">
+          <h1>Health Assessment Report <img src="images/plant1.gif" alt="Plant"/></h1>
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input class="search" type="text" placeholder="Search assessments..." id="searchInput"/>
+          </div>
+        </div>
+        <div class="profile">
+          <a href="profile.html">
+            <img src="images/profile.png" alt="Profile"/>
+          </a>
+        </div>
+      </div>
+
+      <div class="assessment-container">
+        <div class="assessment-header">
+          <div class="assessment-title">New Health Assessment</div>
+          <div class="assessment-controls">
+            <button class="action-btn add" id="saveAssessment">
+              <i class="fas fa-save"></i> Save Assessment
+            </button>
+          </div>
+        </div>
+        <div class="form-container">
+          <div class="form-group">
+            <label for="residentSelect">Resident</label>
+            <select class="form-control select-control" id="residentSelect">
+              <option value="">Please select a resident</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="assessmentDate">Date & Time</label>
+            <input type="text" class="form-control" id="assessmentDate" readonly>
+          </div>
+          <div class="form-group">
+            <label for="assessmentNotes">Assessment Notes</label>
+            <textarea class="form-control textarea-control" id="assessmentNotes" placeholder="Please enter assessment notes"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="log-container">
+        <div class="log-header">Recent Assessments</div>
+        <div class="log-list" id="assessmentLog">
+          <div class="log-item">
+            <div class="log-item-header">
+              <span>Loading assessments...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DARK MODE LOADER -->
+  <script>
+    // On load, apply dark mode if enabled in localStorage
+    if (localStorage.getItem('vh-darkmode') === '1') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+  <style>
+    /* DARK MODE OVERRIDES */
+    body.dark-mode {
+      --primary-color: #90ee90;
+      --primary-light: #253c25;
+      --primary-lighter: #24282e;
+      --secondary-color: #23282d;
+      --background-color: #181c1f;
+      --card-color: #23282d;
+      --text-dark: #f1f1f1;
+      --text-light: #bbbbbb;
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.7);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.8);
+      --status-pending: #ffb84d;
+      --status-completed: #aaffaa;
+      --status-missed: #ff7d7d;
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #181c1f 0%, #23282d 50%, #181c1f 100%);
+    }
+    body.dark-mode .wrapper,
+    body.dark-mode .main {
+      background: var(--background-color);
+      color: var(--text-dark);
+    }
+    body.dark-mode .sidebar {
+      background-color: var(--secondary-color);
+    }
+    body.dark-mode .logo span:last-child {
+      color: var(--text-light);
+    }
+    body.dark-mode .menu-item {
+      color: var(--text-dark);
+    }
+    body.dark-mode .menu-item.active,
+    body.dark-mode .menu-item:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+    body.dark-mode .menu-item.active::after {
+      background-color: var(--primary-color);
+    }
+    body.dark-mode .main {
+      background-color: var(--background-color);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .search,
+    body.dark-mode input[type="text"],
+    body.dark-mode input[type="password"],
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background-color: #23282d;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    body.dark-mode .search:focus,
+    body.dark-mode input[type="text"]:focus,
+    body.dark-mode input[type="password"]:focus,
+    body.dark-mode select:focus,
+    body.dark-mode textarea:focus {
+      border-color: #90ee90;
+      box-shadow: 0 0 0 2px #253c25;
+    }
+    body.dark-mode .assessment-container {
+      background: #24282e;
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .form-container {
+      background: #23282d;
+      color: var(--text-dark);
+    }
+    body.dark-mode .form-control,
+    body.dark-mode .select-control,
+    body.dark-mode .textarea-control {
+      background-color: #23282d;
+      color: #f1f1f1;
+      border: 1px solid #444;
+    }
+    body.dark-mode .form-control:focus,
+    body.dark-mode .select-control:focus,
+    body.dark-mode .textarea-control:focus {
+      border-color: #90ee90;
+      box-shadow: 0 0 0 2px #253c25;
+    }
+    body.dark-mode .log-container {
+      background: #23282d;
+      color: var(--text-dark);
+    }
+    body.dark-mode .log-header {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+    body.dark-mode .log-item {
+      background: #23282d;
+      color: var(--text-dark);
+    }
+    body.dark-mode .log-item:hover {
+      background-color: #253c25;
+    }
+    body.dark-mode .log-resident {
+      color: #90ee90;
+    }
+    body.dark-mode .log-date {
+      color: #bbbbbb;
+    }
+    body.dark-mode .action-btn.add {
+      background-color: #90ee90;
+      color: #181c1f;
+    }
+    body.dark-mode .action-btn.delete {
+      background-color: #d9534f;
+      color: #fff;
+    }
+    body.dark-mode .action-btn.edit {
+      background-color: #6fcf97;
+      color: #181c1f;
+    }
+    body.dark-mode .action-btn:hover {
+      opacity: 1;
+      box-shadow: var(--shadow-lg);
+    }
+    body.dark-mode .modal {
+      background: #23282d;
+      color: var(--text-dark);
+      box-shadow: var(--shadow-lg);
+    }
+    body.dark-mode .modal-title {
+      color: #90ee90;
+    }
+    body.dark-mode .modal-close {
+      color: #bbbbbb;
+    }
+    body.dark-mode .modal-close:hover {
+      color: #90ee90;
+    }
+    body.dark-mode .loader-overlay {
+      background-color: rgba(24, 28, 31, 0.95);
+    }
+    body.dark-mode .loader-text {
+      color: #90ee90;
+    }
+    body.dark-mode .toast {
+      background-color: #223c28;
+      color: #90ee90;
+    }
+    body.dark-mode .bottom-icons img {
+      filter: brightness(0.7);
+    }
+  </style>
+
+  <script>
+    // Show toast notification
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Use localStorage with StaffNumber (for consistency)
+    function getLoggedInStaffNumber() {
+      return localStorage.getItem('StaffNumber');
+    }
+
+    // Populate Resident Select Dropdown (only assigned to logged-in caregiver)
+    async function populateResidentSelect() {
+      const staffNumber = getLoggedInStaffNumber();
+      const residentSelect = document.getElementById('residentSelect');
+      residentSelect.innerHTML = `<option value="">Please select a resident</option>`;
+      if (!staffNumber) {
+        residentSelect.innerHTML = `<option value="">Please log in</option>`;
+        return;
+      }
+      try {
+        const res = await fetch(`/api/residents?AssignedCaregiver=${encodeURIComponent(staffNumber)}`);
+        if (!res.ok) throw new Error('Failed to fetch residents');
+        const residents = await res.json();
+        if (!residents.length) {
+          residentSelect.innerHTML = `<option value="">No assigned residents</option>`;
+          return;
+        }
+        let options = `<option value="">Please select a resident</option>`;
+        for (const r of residents) {
+          options += `<option value="${r.ResidentID}">${r.Fullname}</option>`;
+        }
+        residentSelect.innerHTML = options;
+      } catch (e) {
+        residentSelect.innerHTML = `<option value="">Failed to load residents</option>`;
+      }
+    }
+
+    // Update date/time field in real time
+    function updateDateTime() {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      document.getElementById('assessmentDate').value = formattedDate;
+    }
+
+    // Load recent assessments (for this caregiver's assigned residents)
+    async function loadAssessments(filterText = "") {
+      const staffNumber = getLoggedInStaffNumber();
+      const log = document.getElementById('assessmentLog');
+      log.innerHTML = '<div class="log-item"><div class="log-item-header">Loading assessments...</div></div>';
+      if (!staffNumber) {
+        log.innerHTML = '<div class="log-item"><div class="log-item-header">Please log in</div></div>';
+        return;
+      }
+      try {
+        let url = `/api/assessments?staffNumber=${encodeURIComponent(staffNumber)}`;
+        if (filterText && filterText.trim()) url += `&q=${encodeURIComponent(filterText)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Failed to fetch assessments');
+        const assessments = await res.json();
+        renderAssessmentsLog(assessments);
+      } catch (e) {
+        log.innerHTML = '<div class="log-item"><div class="log-item-header">Failed to load assessments</div></div>';
+      }
+    }
+
+    function renderAssessmentsLog(assessments) {
+      const log = document.getElementById('assessmentLog');
+      if (!assessments.length) {
+        log.innerHTML = '<div class="log-item"><div class="log-item-header">No assessments found</div></div>';
+        return;
+      }
+      let html = '';
+      for (const a of assessments) {
+        const date = new Date(a.AssessmentDate || a.date);
+        const formattedDate = date.toLocaleDateString('en-US', {
+          year: 'numeric', month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        });
+        const notesPreview = a.Notes ? (a.Notes.length > 150 ? a.Notes.substring(0, 150) + '...' : a.Notes) : '';
+        html += `
+          <div class="log-item" data-id="${a.AssessmentID || a.id}">
+            <div class="log-item-header">
+              <span class="log-resident">${a.Fullname || a.residentName}</span>
+              <span class="log-date">${formattedDate}</span>
+            </div>
+            <div class="log-content">${notesPreview}</div>
+          </div>
+        `;
+      }
+      log.innerHTML = html;
+      addLogItemEventListeners(assessments);
+    }
+
+    // Add event listeners to log items for modal viewing
+    function addLogItemEventListeners(assessments) {
+      const items = document.querySelectorAll('.log-item');
+      items.forEach((item, idx) => {
+        item.addEventListener('click', () => {
+          const a = assessments[idx];
+          openViewAssessmentModal(a);
+        });
+      });
+    }
+
+    function openViewAssessmentModal(assessment) {
+      document.getElementById('viewResidentName').value = `${assessment.Fullname || assessment.residentName}`;
+      const date = new Date(assessment.AssessmentDate || assessment.date);
+      document.getElementById('viewAssessmentDate').value = date.toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+      document.getElementById('viewAssessmentNotes').value = assessment.Notes || assessment.notes || '';
+      document.getElementById('viewAssessmentModal').classList.add('show');
+    }
+    document.getElementById('closeViewModal').onclick = () => document.getElementById('viewAssessmentModal').classList.remove('show');
+    document.getElementById('closeViewAssessment').onclick = () => document.getElementById('viewAssessmentModal').classList.remove('show');
+    document.getElementById('viewAssessmentModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('viewAssessmentModal')) document.getElementById('viewAssessmentModal').classList.remove('show');
+    });
+
+    // Save new assessment to the backend
+    async function saveAssessment() {
+      const residentId = document.getElementById('residentSelect').value;
+      const notes = document.getElementById('assessmentNotes').value.trim();
+      const staffNumber = getLoggedInStaffNumber();
+      
+      if (!residentId) {
+        showToast('Please select a resident');
+        return;
+      }
+      if (!notes) {
+        showToast('Please enter assessment notes');
+        return;
+      }
+      if (!staffNumber) {
+        showToast('Please log in');
+        return;
+      }
+      
+      try {
+        document.getElementById('loaderOverlay').classList.add('show');
+        const data = {
+          ResidentID: parseInt(residentId),
+          StaffNumber: staffNumber,
+          Notes: notes
+        };
+        const res = await fetch('/api/assessments', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Failed to save assessment');
+        
+        document.getElementById('assessmentNotes').value = '';
+        loadAssessments();
+        showToast('Assessment saved successfully!');
+      } catch(e) {
+        showToast('Failed to save assessment. Please try again.');
+      } finally {
+        document.getElementById('loaderOverlay').classList.remove('show');
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      loadAssessments(this.value);
+    });
+
+    document.getElementById('saveAssessment').addEventListener('click', saveAssessment);
+
+    setInterval(updateDateTime, 60000);
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDateTime();
+      populateResidentSelect();
+      loadAssessments();
+      setTimeout(() => {
+        document.getElementById('loaderOverlay').classList.remove('show');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

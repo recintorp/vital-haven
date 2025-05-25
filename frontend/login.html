@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VitalHaven Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4c7c2d;
+      --primary-light: #cfe7a8;
+      --primary-lighter: #eef3cd;
+      --secondary-color: #f6f8e3;
+      --background-color: #fefbf6;
+      --card-color: #fefee5;
+      --text-dark: #333;
+      --text-light: #555;
+      --error-color: #dc3545;
+      --warning-color: #ffc107;
+      --success-color: #28a745;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #dff5e1 0%, #f7f2eb 50%, #d0e0d0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      max-width: 1000px;
+      height: auto;
+      min-height: 600px;
+      background-color: white;
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+    }
+
+    .visual {
+      width: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .visual img.active {
+      opacity: 1;
+    }
+
+    .indicator {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .indicator-dot.active {
+      background-color: white;
+      width: 30px;
+      border-radius: 5px;
+    }
+
+    .form-container {
+      width: 50%;
+      background-color: var(--background-color);
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .logo-img {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .logo-img img {
+      width: 160px;
+      height: auto;
+      transition: var(--transition);
+    }
+
+    .logo-img img:hover {
+      transform: scale(1.05);
+    }
+
+    .form-container h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      text-align: center;
+    }
+
+    .form-container p.description {
+      color: var(--primary-color);
+      font-size: 1rem;
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .form-content {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .input-field {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .input-field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .input-field input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius-sm);
+      background-color: white;
+      color: var(--text-dark);
+      transition: var(--transition);
+    }
+
+    .input-field input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(123, 167, 87, 0.2);
+    }
+
+    .input-field input:disabled {
+      background-color: #f8f9fa;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 15px;
+      top: 40px;
+      color: #a0aec0;
+      cursor: pointer;
+    }
+
+    .prompt-message {
+      font-size: 0.85rem;
+      margin: 8px 0 0;
+      display: none;
+      padding: 10px 12px;
+      border-radius: var(--border-radius-sm);
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .prompt-message.show {
+      display: block;
+    }
+
+    .prompt-error {
+      background-color: #fee2e2;
+      color: var(--error-color);
+      border-left: 4px solid var(--error-color);
+    }
+
+    .prompt-warning {
+      background-color: #fef3c7;
+      color: #92400e;
+      border-left: 4px solid var(--warning-color);
+    }
+
+    .prompt-info {
+      background-color: #dbeafe;
+      color: #1e40af;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .prompt-success {
+      background-color: #dcfce7;
+      color: #166534;
+      border-left: 4px solid var(--success-color);
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .login-button:hover {
+      background-color: #3e6a25;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .login-button:active {
+      transform: translateY(1px);
+    }
+
+    .login-button:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    .login-button i {
+      font-size: 0.9rem;
+    }
+
+    .additional-links {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .additional-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .additional-links a:hover {
+      text-decoration: underline;
+      color: #3e6a25;
+    }
+
+    .footer-image {
+      margin-top: 30px;
+    }
+
+    .footer-image img {
+      width: 80px;
+      height: auto;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .footer-image img:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* Welcome Screen Styles */
+    #welcomeScreen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #dff5e1, #f7f2eb);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .welcome-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeIn 0.8s forwards 0.3s;
+    }
+
+    .welcome-subtext {
+      font-size: 1.2rem;
+      color: var(--text-light);
+      opacity: 0;
+      animation: fadeIn 0.8s forwards 0.6s;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(76, 124, 45, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s linear infinite;
+      opacity: 0;
+      margin-top: 30px;
+      animation: fadeIn 0.5s forwards 0.9s, spin 1s linear infinite 1.2s;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .fade-out {
+      animation: fadeOut 0.8s forwards;
+    }
+
+    /* Modal Styles */
+    #securityModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: auto;
+      padding: 30px;
+      border-radius: var(--border-radius-lg);
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      animation: modalFadeIn 0.3s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--text-dark);
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 15px 0;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid #e2e8f0;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .modal-content input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(123, 167, 87, 0.2);
+    }
+
+    .modal-content input:disabled {
+      background-color: #f8f9fa;
+      color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .modal-button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      flex: 1;
+    }
+
+    .modal-button.primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .modal-button.primary:hover {
+      background-color: #3e6a25;
+    }
+
+    .modal-button.secondary {
+      background-color: #f1f5f9;
+      color: var(--text-dark);
+    }
+
+    .modal-button.secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    .modal-button:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
+    }
+
+    /* Custom Alert Styles */
+    #customAlert {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--border-radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 3000;
+      max-width: 90%;
+      text-align: center;
+      animation: slideIn 0.3s forwards;
+      align-items: center;
+    }
+
+    @keyframes slideIn {
+      from { top: -100px; opacity: 0; }
+      to { top: 20px; opacity: 1; }
+    }
+
+    @keyframes slideOut {
+      from { top: 20px; opacity: 1; }
+      to { top: -100px; opacity: 0; }
+    }
+
+    .alert-icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .visual, .form-container {
+        width: 100%;
+      }
+
+      .visual {
+        height: 250px;
+      }
+
+      .form-container {
+        padding: 40px 30px;
+      }
+
+      .logo-img img {
+        width: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 30px 20px;
+      }
+
+      .form-container h2 {
+        font-size: 1.5rem;
+      }
+
+      .modal-content {
+        padding: 20px;
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .modal-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="visual">
+      <div class="image-wrapper">
+        <img src="images/elder2.jpg" alt="Happy elderly person" class="active">
+        <img src="images/elder1.jpg" alt="Caregiver assisting resident">
+        <img src="images/elder3.jpg" alt="Senior community activity">
+        <div class="indicator">
+          <div class="indicator-dot active"></div>
+          <div class="indicator-dot"></div>
+          <div class="indicator-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="logo-img">
+        <img src="images/Vital.png" alt="VitalHaven Logo">
+      </div>
+      <h2>Welcome Back</h2>
+      <p class="description">Integrated Elderly Care Management System</p>
+      
+      <form class="form-content" id="loginForm">
+        <div class="input-field">
+          <label for="username">Staff Number</label>
+          <input type="text" id="username" name="username" placeholder="Enter your staff number (e.g. N-012025 or admin)" required>
+        </div>
+        
+        <div class="input-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <i class="fas fa-eye input-icon" id="togglePassword"></i>
+        </div>
+        
+        <div class="prompt-message prompt-error" id="invalidCredentialsPrompt">
+          <i class="fas fa-exclamation-circle"></i> Invalid staff number or password
+        </div>
+        
+        <div class="prompt-message prompt-warning" id="lockPrompt">
+          <i class="fas fa-lock"></i> Too many failed attempts. Please try again in <span id="countdown">10</span> seconds.
+        </div>
+        
+        <div class="prompt-message prompt-warning" id="inputInvalidPrompt">
+          <i class="fas fa-exclamation-triangle"></i> Please fill in all required fields
+        </div>
+        
+        <button type="submit" class="login-button" id="loginButton">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+      
+      <div class="additional-links">
+        <a href="#" id="forgotPasswordLink">Forgot password?</a>
+        <a href="#" id="requestAccountLink">Request an account to the admin</a>
+      </div>
+      
+      <div class="footer-image">
+        <img src="images/plant.gif" alt="Decorative plant">
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Code Modal -->
+  <div id="securityModal">
+    <div class="modal-content">
+      <h3>Security Verification</h3>
+      <p>Please enter your security code to continue</p>
+      
+      <input type="password" id="securityCodeInput" placeholder="Enter security code" />
+      
+      <div class="prompt-message prompt-error" id="invalidVerificationPrompt">
+        <i class="fas fa-exclamation-circle"></i> Invalid verification code
+      </div>
+      
+      <div class="prompt-message prompt-warning" id="securityLockPrompt">
+        <i class="fas fa-lock"></i> Security code locked for <span id="securityCountdown">10</span> seconds
+      </div>
+      
+      <div class="modal-buttons">
+        <button class="modal-button secondary" onclick="closeSecurityModal()">Cancel</button>
+        <button class="modal-button primary" onclick="verifySecurityCode()" id="verifyButton">
+          <i class="fas fa-check"></i> Verify
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Screen -->
+  <div id="welcomeScreen">
+    <div class="welcome-text" id="welcomeText">Welcome Caregiver</div>
+    <div class="welcome-subtext" id="welcomeSubtext">Loading your dashboard...</div>
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Custom Alert -->
+  <div id="customAlert">
+    <i class="fas fa-info-circle alert-icon"></i>
+    <span id="alertMessage"></span>
+  </div>
+
+  <script>
+    // DOM Elements
+    const images = document.querySelectorAll('.visual img');
+    const indicators = document.querySelectorAll('.indicator-dot');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const loginButton = document.getElementById('loginButton');
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    const requestAccountLink = document.getElementById('requestAccountLink');
+    const invalidCredentialsPrompt = document.getElementById('invalidCredentialsPrompt');
+    const lockPrompt = document.getElementById('lockPrompt');
+    const inputInvalidPrompt = document.getElementById('inputInvalidPrompt');
+    const countdownDisplay = document.getElementById('countdown');
+    const customAlert = document.getElementById('customAlert');
+    const alertMessage = document.getElementById('alertMessage');
+    const welcomeText = document.getElementById('welcomeText');
+    const welcomeSubtext = document.getElementById('welcomeSubtext');
+
+    // Carousel functionality
+    let currentImageIndex = 0;
+    let carouselInterval;
+
+    function startCarousel() {
+      carouselInterval = setInterval(() => {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        updateCarousel(currentImageIndex);
+      }, 5000);
+    }
+
+    function updateCarousel(index) {
+      images.forEach((img, i) => img.classList.toggle('active', i === index));
+      indicators.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye-slash');
+      this.classList.toggle('fa-eye');
+    });
+
+    // Indicator dots click handler
+    indicators.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        clearInterval(carouselInterval);
+        currentImageIndex = index;
+        updateCarousel(currentImageIndex);
+        startCarousel();
+      });
+    });
+
+    // Login attempts tracking
+    let attempts = 0;
+    const maxAttempts = 3;
+    const lockDuration = 10000; // 10 seconds
+    let lockTimer;
+    let countdownInterval;
+
+    // Security modal attempts
+    let securityAttempts = 0;
+    const maxSecurityAttempts = 3;
+    let securityCountdown;
+
+    // Track login type: "admin" or "caregiver"
+    let loginType = "caregiver";
+
+    // Show custom alert
+    function showAlert(message, type = 'info') {
+      alertMessage.textContent = message;
+      customAlert.style.backgroundColor = type === 'error' ? '#dc3545' : 
+                                        type === 'success' ? '#28a745' : 
+                                        type === 'warning' ? '#ffc107' : 
+                                        '#4c7c2d';
+      customAlert.style.animation = 'none';
+      customAlert.offsetHeight;
+      customAlert.style.display = 'flex';
+      customAlert.style.animation = 'slideIn 0.3s forwards';
+      setTimeout(() => {
+        customAlert.style.animation = 'slideOut 0.3s forwards';
+        setTimeout(() => {
+          customAlert.style.display = 'none';
+        }, 300);
+      }, 3000);
+    }
+
+    function lockFormFields() {
+      invalidCredentialsPrompt.style.display = 'none';
+      lockPrompt.style.display = 'block';
+      usernameInput.disabled = true;
+      passwordInput.disabled = true;
+      loginButton.disabled = true;
+      let secondsLeft = 10;
+      countdownDisplay.textContent = secondsLeft;
+      countdownInterval = setInterval(() => {
+        secondsLeft--;
+        countdownDisplay.textContent = secondsLeft;
+        if (secondsLeft <= 0) {
+          clearInterval(countdownInterval);
+          unlockFormFields();
+        }
+      }, 1000);
+    }
+
+    function unlockFormFields() {
+      usernameInput.disabled = false;
+      passwordInput.disabled = false;
+      loginButton.disabled = false;
+      usernameInput.value = '';
+      passwordInput.value = '';
+      invalidCredentialsPrompt.style.display = 'none';
+      lockPrompt.style.display = 'none';
+      inputInvalidPrompt.style.display = 'none';
+      attempts = 0;
+    }
+
+    function showSecurityModal() {
+      document.getElementById('securityModal').style.display = 'flex';
+      document.getElementById('invalidVerificationPrompt').style.display = 'none';
+      document.getElementById('securityLockPrompt').style.display = 'none';
+      document.getElementById('securityCodeInput').value = '';
+      document.getElementById('securityCodeInput').disabled = false;
+      document.getElementById('verifyButton').disabled = false;
+    }
+
+    function closeSecurityModal() {
+      document.getElementById('securityModal').style.display = 'none';
+    }
+
+    function lockSecurityFields() {
+      document.getElementById('invalidVerificationPrompt').style.display = 'none';
+      document.getElementById('securityLockPrompt').style.display = 'block';
+      const securityCodeInput = document.getElementById('securityCodeInput');
+      const verifyButton = document.getElementById('verifyButton');
+      securityCodeInput.disabled = true;
+      verifyButton.disabled = true;
+      let secondsLeft = 10;
+      document.getElementById('securityCountdown').textContent = secondsLeft;
+      securityCountdown = setInterval(() => {
+        secondsLeft--;
+        document.getElementById('securityCountdown').textContent = secondsLeft;
+        if (secondsLeft <= 0) {
+          clearInterval(securityCountdown);
+          unlockSecurityFields();
+          closeSecurityModal();
+        }
+      }, 1000);
+    }
+
+    function unlockSecurityFields() {
+      document.getElementById('securityCodeInput').disabled = false;
+      document.getElementById('verifyButton').disabled = false;
+      document.getElementById('invalidVerificationPrompt').style.display = 'none';
+      document.getElementById('securityLockPrompt').style.display = 'none';
+      securityAttempts = 0;
+    }
+
+    // Security Code Verification (only for admin)
+    function verifySecurityCode() {
+      const codeInput = document.getElementById('securityCodeInput');
+      const code = codeInput.value.trim();
+      if (code === "08092003") {
+        closeSecurityModal();
+        showWelcomeScreen();
+      } else {
+        securityAttempts++;
+        document.getElementById('invalidVerificationPrompt').style.display = 'block';
+        if (securityAttempts >= maxSecurityAttempts) {
+          lockSecurityFields();
+        }
+      }
+    }
+
+    function showWelcomeScreen() {
+      document.querySelector('.container').style.opacity = '0';
+      document.querySelector('.container').style.pointerEvents = 'none';
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      welcomeScreen.style.display = 'flex';
+      if (loginType === "admin") {
+        welcomeText.textContent = "Welcome Admin";
+        welcomeSubtext.textContent = "Loading your dashboard...";
+      } else {
+        welcomeText.textContent = "Welcome Caregiver";
+        welcomeSubtext.textContent = "Loading your dashboard...";
+      }
+      setTimeout(() => {
+        welcomeScreen.classList.add('fade-out');
+      }, 1500);
+      setTimeout(() => {
+        if (loginType === "admin") {
+          window.location.href = 'Overview.html';
+        } else {
+          window.location.href = 'cgdashboard.html';
+        }
+      }, 2500);
+    }
+
+    // Form submission handler (ADMIN and CAREGIVER login)
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const StaffNumber = usernameInput.value.trim();
+      const Password = passwordInput.value.trim();
+      invalidCredentialsPrompt.style.display = 'none';
+      inputInvalidPrompt.style.display = 'none';
+      if (!StaffNumber || !Password) {
+        inputInvalidPrompt.style.display = 'block';
+        return;
+      }
+      if (StaffNumber === 'admin' && Password === '1234') {
+        loginType = "admin";
+        showSecurityModal(); // Only admin needs security code!
+        return;
+      }
+      // Caregiver login API (no security code for caregivers)
+      try {
+        const res = await fetch('/api/caregivers/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ StaffNumber, Password }) // Use capitalized keys everywhere!
+        });
+        if (res.status === 200) {
+          loginType = "caregiver";
+          // SET StaffNumber IN localStorage (for ALL future pages!)
+          localStorage.setItem('StaffNumber', StaffNumber); // <--- Use capitalized key!
+          showWelcomeScreen();
+        } else {
+          attempts++;
+          invalidCredentialsPrompt.style.display = 'block';
+          if (attempts >= maxAttempts) {
+            lockFormFields();
+          }
+        }
+      } catch (err) {
+        showAlert('Server error. Please try again.', 'error');
+      }
+    });
+
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      showAlert('Directly go to the Admin Office, to inquire about your password.', 'info');
+    });
+
+    requestAccountLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      showAlert('Account request has been sent to the administrator.', 'success');
+      setTimeout(() => {
+        window.location.href = 'request.html';
+      }, 3000);
+    });
+
+    startCarousel();
+    updateCarousel(0);
+    invalidCredentialsPrompt.style.display = 'none';
+    lockPrompt.style.display = 'none';
+    inputInvalidPrompt.style.display = 'none';
+    document.getElementById('invalidVerificationPrompt').style.display = 'none';
+    document.getElementById('securityLockPrompt').style.display = 'none';
+  </script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Caregiver Registration - VitalHaven</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ... your CSS unchanged ... */
+    :root {
+      --primary: #4c7c2d;
+      --primary-light: #dff5e1;
+      --secondary: #f7f2eb;
+      --accent: #6a944a;
+      --error: #b55a5a;
+      --text-dark: #2e4326;
+      --text-medium: #444;
+      --text-light: #888;
+      --border: #c3d4ab;
+      --bg-light: #f4f7e5;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .form-container {
+      width: 100%;
+      max-width: 650px;
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: var(--primary);
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: var(--text-medium);
+      font-size: 14px;
+      margin: 0;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-weight: 500;
+      color: var(--text-dark);
+      font-size: 14px;
+    }
+    .required::after {
+      content: " *";
+      color: var(--error);
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background-color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .password-toggle:hover {
+      color: var(--text-medium);
+    }
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(106, 148, 74, 0.2);
+      outline: none;
+    }
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .radio-option input[type="radio"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .radio-option input[type="radio"]:checked {
+      border-color: var(--accent);
+    }
+    .radio-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .radio-option label {
+      font-weight: 400;
+      color: var(--text-medium);
+      cursor: pointer;
+    }
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      text-align: center;
+    }
+    .btn-submit {
+      background-color: var(--accent);
+      color: white;
+    }
+    .btn-cancel {
+      background-color: white;
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .btn-submit:hover {
+      background-color: #5a803f;
+    }
+    .btn-cancel:hover {
+      background-color: #f8e8e8;
+    }
+    .form-note {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 4px;
+      font-style: italic;
+    }
+    .form-divider {
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 10px 0;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 24px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+    .modal-message {
+      margin-bottom: 24px;
+      color: var(--text-medium);
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .modal-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      min-width: 80px;
+    }
+    .modal-btn-confirm {
+      background-color: var(--accent);
+      color: white;
+    }
+    .modal-btn-cancel {
+      background-color: #f0f0f0;
+      color: var(--text-medium);
+    }
+    #responseMessage {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      min-height: 20px;
+    }
+    .error {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .input-error {
+      border-color: var(--error) !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-header">
+      <h2>Caregiver Registration</h2>
+      <p class="subtitle">Register new caregiver staff members</p>
+    </div>
+    <form id="caregiverForm" autocomplete="off">
+      <div class="form-group">
+        <label for="staffNumber" class="required">Staff Number</label>
+        <input type="text" id="staffNumber" name="StaffNumber" maxlength="8"
+               placeholder="Format: N-012025" autocomplete="off" required />
+        <p class="form-note">Format: N- followed by 6 digits (e.g., N-012025)</p>
+        <div id="staffNumberError" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="password" class="required">Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="password" name="Password" minlength="8" autocomplete="new-password" required />
+          <button type="button" class="password-toggle" id="togglePassword">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div id="passwordError" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="fullname" class="required">Full Name</label>
+        <input type="text" id="fullname" name="Fullname" required />
+        <div id="fullnameError" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="contactNo">Contact Number</label>
+        <input type="tel" id="contactNo" name="ContactNo" maxlength="18" placeholder="Optional" />
+        <div id="contactNoError" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="Email" maxlength="60" placeholder="Optional" />
+        <div id="emailError" class="error"></div>
+      </div>
+      <div class="form-divider"></div>
+      <div class="form-group">
+        <label class="required">Assigned Resident</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="residentA" name="AssignedResident" value="A" required />
+            <label for="residentA">Resident A</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="residentB" name="AssignedResident" value="B" />
+            <label for="residentB">Resident B</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="residentC" name="AssignedResident" value="C" />
+            <label for="residentC">Resident C</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="residentD" name="AssignedResident" value="D" />
+            <label for="residentD">Resident D</label>
+          </div>
+        </div>
+        <div id="assignedResidentError" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="shift" class="required">Shift</label>
+        <select id="shift" name="Shift" required>
+          <option value="">Select a shift</option>
+          <option value="Day">Day Shift</option>
+          <option value="Night">Night Shift</option>
+          <option value="Flexible">Flexible</option>
+        </select>
+        <div id="shiftError" class="error"></div>
+      </div>
+      <div id="responseMessage"></div>
+      <div class="form-buttons">
+        <button type="button" class="btn btn-cancel" onclick="window.location.href='caregiverlogs.html'">Cancel</button>
+        <button type="submit" class="btn btn-submit">Register Caregiver</button>
+      </div>
+    </form>
+  </div>
+  <!-- Confirmation Modal -->
+  <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">Confirm Registration</div>
+      <div class="modal-message">Are you sure you want to register this caregiver? This action cannot be undone.</div>
+      <div class="modal-buttons">
+        <button id="cancelConfirm" class="modal-btn modal-btn-cancel">No</button>
+        <button id="confirmSubmit" class="modal-btn modal-btn-confirm">Yes</button>
+      </div>
+    </div>
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-eye');
+      icon.classList.toggle('fa-eye-slash');
+    });
+
+    const modal = document.getElementById('confirmationModal');
+    const cancelConfirmBtn = document.getElementById('cancelConfirm');
+    const confirmSubmitBtn = document.getElementById('confirmSubmit');
+    const form = document.getElementById('caregiverForm');
+    const responseMessage = document.getElementById('responseMessage');
+
+    function showModal() { modal.style.display = 'flex'; }
+    function hideModal() { modal.style.display = 'none'; }
+
+    function clearErrors() {
+      document.querySelectorAll('.error').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+    }
+
+    function validateForm() {
+      let isValid = true;
+      clearErrors();
+
+      // Validate Staff Number
+      const staffNumber = document.getElementById('staffNumber');
+      if (!staffNumber.value.trim()) {
+        document.getElementById('staffNumberError').textContent = 'Staff number is required';
+        staffNumber.classList.add('input-error');
+        isValid = false;
+      } else if (!/^N-\d{6}$/.test(staffNumber.value.trim())) {
+        document.getElementById('staffNumberError').textContent = 'Must be in format N-012025';
+        staffNumber.classList.add('input-error');
+        isValid = false;
+      }
+
+      // Validate Password
+      const password = document.getElementById('password');
+      if (!password.value.trim()) {
+        document.getElementById('passwordError').textContent = 'Password is required';
+        password.classList.add('input-error');
+        isValid = false;
+      } else if (password.value.trim().length < 8) {
+        document.getElementById('passwordError').textContent = 'Password must be at least 8 characters';
+        password.classList.add('input-error');
+        isValid = false;
+      }
+
+      // Validate Full Name
+      const fullname = document.getElementById('fullname');
+      if (!fullname.value.trim()) {
+        document.getElementById('fullnameError').textContent = 'Full name is required';
+        fullname.classList.add('input-error');
+        isValid = false;
+      }
+
+      // Validate Assigned Resident
+      const assignedResident = document.querySelector('input[name="AssignedResident"]:checked');
+      if (!assignedResident) {
+        document.getElementById('assignedResidentError').textContent = 'Please select a resident';
+        isValid = false;
+      }
+
+      // Validate Shift
+      const shift = document.getElementById('shift');
+      if (!shift.value) {
+        document.getElementById('shiftError').textContent = 'Please select a shift';
+        shift.classList.add('input-error');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+      showModal();
+    });
+
+    confirmSubmitBtn.addEventListener('click', async function() {
+      hideModal();
+      const assignedResident = document.querySelector('input[name="AssignedResident"]:checked')?.value;
+      const data = {
+        StaffNumber: document.getElementById('staffNumber').value.trim(),
+        Password: document.getElementById('password').value,
+        Fullname: document.getElementById('fullname').value.trim(),
+        ContactNo: document.getElementById('contactNo').value.trim() || null,
+        Email: document.getElementById('email').value.trim() || null,
+        AssignedResident: assignedResident,
+        Shift: document.getElementById('shift').value
+      };
+      
+      try {
+        responseMessage.textContent = 'Processing...';
+        responseMessage.style.color = 'var(--text-medium)';
+        
+        // Use relative path for deployment flexibility
+        const response = await fetch('/api/caregivers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (response.ok) {
+          responseMessage.textContent = 'Caregiver registered successfully!';
+          responseMessage.style.color = 'var(--primary)';
+          form.reset();
+          
+          // Redirect after successful registration (optional)
+          setTimeout(() => {
+            window.location.href = 'caregiverlogs.html';
+          }, 1500);
+        } else {
+          responseMessage.textContent = result.message || 'Registration failed. Please try again.';
+          responseMessage.style.color = 'var(--error)';
+          
+          // Display server-side validation errors
+          if (result.errors) {
+            for (const [field, message] of Object.entries(result.errors)) {
+              const errorElement = document.getElementById(`${field}Error`);
+              if (errorElement) {
+                errorElement.textContent = message;
+                const inputElement = document.getElementById(field);
+                if (inputElement) inputElement.classList.add('input-error');
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        responseMessage.textContent = 'Network error. Please check your connection and try again.';
+        responseMessage.style.color = 'var(--error)';
+      }
+    });
+
+    cancelConfirmBtn.addEventListener('click', hideModal);
+
+    // Staff number input formatting
+    const staffNumberInput = document.getElementById('staffNumber');
+    staffNumberInput.addEventListener('input', function(e) {
+      // Get cursor position before any changes
+      const cursorPosition = this.selectionStart;
+      // Auto-insert N- if field is empty
+      if (this.value.length === 0) {
+        this.value = 'N-';
+        return;
+      }
+      // Ensure it starts with N-
+      if (!this.value.startsWith('N-')) {
+        this.value = 'N-' + this.value.replace(/[^0-9]/g, '');
+      }
+      // After N-, only allow digits
+      if (this.value.length > 2) {
+        const prefix = this.value.substring(0, 2);
+        const numbers = this.value.substring(2).replace(/[^0-9]/g, '');
+        this.value = prefix + numbers;
+      }
+      // Limit to 8 characters total (N- + 6 digits)
+      if (this.value.length > 8) {
+        this.value = this.value.substring(0, 8);
+      }
+      // Restore cursor position (adjusting for any changes we made)
+      if (cursorPosition === 1 && this.value === 'N-') {
+        this.setSelectionRange(2, 2);
+      } else {
+        this.setSelectionRange(cursorPosition, cursorPosition);
+      }
+    });
+    
+    staffNumberInput.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+      const cleaned = pastedText.replace(/[^0-9]/g, '');
+      this.value = 'N-' + cleaned.substring(0, 6);
+    });
+  });
+</script>
+</body>
+</html>

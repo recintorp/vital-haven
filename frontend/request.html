@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Account Email</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #4c7c2d;
+      --light-green: #6a944a;
+      --lighter-green: #8ebf5f;
+      --pale-green: #d0e0d0;
+      --pale-green-bg: #f4f7e5;
+      --dark-green: #2e4326;
+      --error-red: #b55a5a;
+      --dark-error-red: #993f3f;
+      --white: #ffffff;
+      --off-white: #fefbf6;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --text-dark: #333333;
+      --text-medium: #666666;
+      --text-light: #888888;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 16px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #dff5e1, #f7f2eb, #d0e0d0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 750px;
+      background-color: var(--off-white);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 40px 50px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary-green);
+      margin-bottom: 16px;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .form-description {
+      text-align: center;
+      color: var(--text-medium);
+      margin-bottom: 24px;
+      font-size: 15px;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--dark-green);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--border-radius-md);
+      border: 1.5px solid var(--medium-gray);
+      background-color: var(--white);
+      font-size: 15px;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--light-green);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(106, 148, 74, 0.2);
+    }
+
+    input[readonly] {
+      background-color: var(--pale-green-bg);
+      color: var(--text-medium);
+      cursor: not-allowed;
+    }
+
+    textarea {
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.6;
+      letter-spacing: 0.02em;
+      color: var(--text-dark);
+      min-height: 180px;
+      resize: vertical;
+      width: 100%;
+      padding: 14px 16px;
+    }
+
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      color: var(--white);
+      min-width: 110px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn.send {
+      background-color: var(--light-green);
+    }
+
+    .btn.send:hover {
+      background-color: var(--primary-green);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn.discard {
+      background-color: var(--error-red);
+    }
+
+    .btn.discard:hover {
+      background-color: var(--dark-error-red);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .plant-deco {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      width: 120px;
+      height: auto;
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .form-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Modal styles */
+    #discardModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      font-family: inherit;
+      backdrop-filter: blur(4px);
+    }
+
+    #discardModal .modal-content {
+      background: var(--white);
+      padding: 32px 40px;
+      border-radius: var(--border-radius-lg);
+      max-width: 420px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      color: var(--text-dark);
+      user-select: none;
+      transform: scale(0.95);
+      animation: modalAppear 0.2s ease-out forwards;
+    }
+
+    @keyframes modalAppear {
+      to {
+        transform: scale(1);
+      }
+    }
+
+    #discardModal .modal-content p {
+      font-size: 17px;
+      margin-bottom: 28px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    #discardModal .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    #discardModal button {
+      cursor: pointer;
+      padding: 10px 24px;
+      font-size: 15px;
+      border: none;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      transition: var(--transition);
+      min-width: 100px;
+      color: var(--white);
+    }
+
+    #discardModal button.yes {
+      background-color: var(--error-red);
+    }
+
+    #discardModal button.yes:hover {
+      background-color: var(--dark-error-red);
+      transform: translateY(-1px);
+    }
+
+    #discardModal button.no {
+      background-color: var(--light-green);
+    }
+
+    #discardModal button.no:hover {
+      background-color: var(--primary-green);
+      transform: translateY(-1px);
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .form-container {
+        padding: 30px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .form-description {
+        max-width: 100%;
+        font-size: 14px;
+      }
+
+      .plant-deco {
+        width: 80px;
+        opacity: 0.7;
+      }
+
+      #discardModal .modal-content {
+        padding: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 24px 20px;
+      }
+
+      .form-buttons {
+        flex-direction: column-reverse;
+        gap: 12px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    /* Loading state */
+    .btn.loading {
+      position: relative;
+      pointer-events: none;
+      color: transparent;
+    }
+
+    .btn.loading::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Success message */
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .success-message h2 {
+      color: var(--primary-green);
+      margin-bottom: 16px;
+    }
+
+    .success-message p {
+      color: var(--text-medium);
+      margin-bottom: 24px;
+    }
+
+    .success-icon {
+      font-size: 60px;
+      color: var(--primary-green);
+      margin-bottom: 20px;
+      animation: bounce 0.6s;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-content">
+      <h2>Request an Account</h2>
+      <!-- CHANGED: New instruction for the form description -->
+      <p class="form-description">
+        Please update the blanks in the message template below with your full name, staff number, and email address.
+      </p>
+      
+      <form id="requestForm">
+        <div class="form-group">
+          <label for="to">Recipient</label>
+          <input type="text" id="to" name="to" value="Admin" readonly />
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" value="Request Account" readonly />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Your Request</label>
+          <!-- CHANGED: The template is in the textarea so they can edit the blanks instantly -->
+          <textarea id="message" name="message">I would like to request an account. My name is ______ and my staff number is _______. My email is ______@gmail.com.</textarea>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" id="discardBtn" class="btn discard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Discard
+          </button>
+          <button type="submit" class="btn send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Send
+          </button>
+        </div>
+      </form>
+
+      <div class="success-message" id="successMessage">
+        <div class="success-icon">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999" stroke="#4c7c2d" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 4L12 14.01L9 11.01" stroke="#4c7c2d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>Request Sent Successfully!</h2>
+        <p>The admin has been notified. You'll receive a reply in your email shortly.</p>
+        <button class="btn send" id="returnBtn" style="margin: 0 auto;">
+          Return to Login
+        </button>
+      </div>
+    </div>
+
+    <!-- Plant decoration in bottom-left corner -->
+    <img src="images/plant.gif" alt="Decorative plant" class="plant-deco" />
+  </div>
+
+  <!-- Modal for discard confirmation -->
+  <div id="discardModal">
+    <div class="modal-content">
+      <p>Discard current request?</p>
+      <p style="font-weight: normal; font-size: 15px; margin-bottom: 24px; color: var(--text-medium);">All entered information will be lost.</p>
+      <div class="modal-buttons">
+        <button class="no">Cancel</button>
+        <button class="yes">Discard</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('requestForm');
+    const discardBtn = document.getElementById('discardBtn');
+    const returnBtn = document.getElementById('returnBtn');
+    const discardModal = document.getElementById('discardModal');
+    const yesBtn = discardModal.querySelector('button.yes');
+    const noBtn = discardModal.querySelector('button.no');
+    const successMessage = document.getElementById('successMessage');
+    const sendBtn = form.querySelector('.btn.send');
+
+    // Show modal when discard button clicked
+    discardBtn.addEventListener('click', () => {
+      discardModal.style.display = 'flex';
+    });
+
+    // Yes button: redirect to login.html
+    yesBtn.addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+
+    // No button: close modal
+    noBtn.addEventListener('click', () => {
+      discardModal.style.display = 'none';
+    });
+
+    // Return button: redirect to login.html
+    returnBtn.addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+
+    // --- THE ONLY CHANGE: actual POST to backend ---
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      sendBtn.classList.add('loading');
+      sendBtn.disabled = true;
+
+      const message = document.getElementById('message').value;
+
+      try {
+        const response = await fetch('/api/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ body: message })
+        });
+        if (!response.ok) throw new Error('Failed to send request');
+        // Hide form and show success message
+        form.style.display = 'none';
+        successMessage.style.display = 'block';
+      } catch (err) {
+        alert('Failed to send request. Please try again later.');
+      } finally {
+        sendBtn.classList.remove('loading');
+        sendBtn.disabled = false;
+      }
+    });
+
+    // Close modal if clicked outside modal content
+    window.addEventListener('click', (e) => {
+      if (e.target === discardModal) {
+        discardModal.style.display = 'none';
+      }
+    });
+
+    // Add animation to textarea placeholder text
+    const textarea = document.getElementById('message');
+    textarea.addEventListener('focus', function() {
+      if (this.value === this.defaultValue) {
+        this.value = '';
+      }
+    });
+
+    textarea.addEventListener('blur', function() {
+      if (this.value === '') {
+        this.value = this.defaultValue;
+      }
+    });
+  });
+</script>
+</body>
+</html>

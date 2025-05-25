@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resident Registration - VitalHaven</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4c7c2d;
+      --primary-light: #dff5e1;
+      --secondary: #f7f2eb;
+      --accent: #6a944a;
+      --error: #b55a5a;
+      --text-dark: #2e4326;
+      --text-medium: #444;
+      --text-light: #888;
+      --border: #c3d4ab;
+      --bg-light: #f4f7e5;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .form-container {
+      width: 100%;
+      max-width: 650px;
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: var(--primary);
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: var(--text-medium);
+      font-size: 14px;
+      margin: 0;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-weight: 500;
+      color: var(--text-dark);
+      font-size: 14px;
+    }
+    .required::after {
+      content: " *";
+      color: var(--error);
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background-color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .password-toggle:hover {
+      color: var(--text-medium);
+    }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(106, 148, 74, 0.2);
+      outline: none;
+    }
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .radio-option input[type="radio"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .radio-option input[type="radio"]:checked {
+      border-color: var(--accent);
+    }
+    .radio-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .radio-option label {
+      font-weight: 400;
+      color: var(--text-medium);
+      cursor: pointer;
+    }
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      text-align: center;
+    }
+    .btn-submit {
+      background-color: var(--accent);
+      color: white;
+    }
+    .btn-cancel {
+      background-color: white;
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+    .btn-upload {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      font-size: 14px;
+      min-width: auto;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .btn-submit:hover {
+      background-color: #5a803f;
+    }
+    .btn-cancel:hover {
+      background-color: #f8e8e8;
+    }
+    .btn-upload:hover {
+      background-color: #d0e6c5;
+    }
+    .form-note {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 4px;
+      font-style: italic;
+    }
+    .form-divider {
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 10px 0;
+    }
+    .file-upload-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .file-upload-wrapper input[type="file"] {
+      display: none;
+    }
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-grow: 1;
+    }
+    .file-name {
+      font-size: 13px;
+      color: var(--text-medium);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .file-remove {
+      color: var(--error);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 14px;
+    }
+    .file-remove:hover {
+      color: #d33;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 24px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+    .modal-message {
+      margin-bottom: 24px;
+      color: var(--text-medium);
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .modal-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      min-width: 80px;
+    }
+    .modal-btn-confirm {
+      background-color: var(--accent);
+      color: white;
+    }
+    .modal-btn-cancel {
+      background-color: #f0f0f0;
+      color: var(--text-medium);
+    }
+    #responseMessage {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      min-height: 20px;
+    }
+    .error {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .input-error {
+      border-color: var(--error) !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-header">
+      <h2>Edit Resident</h2>
+      <p class="subtitle">Update resident information</p>
+    </div>
+    <form id="residentForm" autocomplete="off" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="fullname" class="required">Full Name</label>
+        <input type="text" id="fullname" name="Fullname" required />
+        <div id="fullnameError" class="error"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="dateOfBirth" class="required">Date of Birth</label>
+        <input type="date" id="dateOfBirth" name="DateOfBirth" required />
+        <div id="dateOfBirthError" class="error"></div>
+      </div>
+      
+      <div class="form-group">
+        <label class="required">Gender</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="genderMale" name="Gender" value="Male" required />
+            <label for="genderMale">Male</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="genderFemale" name="Gender" value="Female" />
+            <label for="genderFemale">Female</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="genderOther" name="Gender" value="Other" />
+            <label for="genderOther">Other</label>
+          </div>
+        </div>
+        <div id="genderError" class="error"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="medicalFile">Medical File</label>
+        <div class="file-upload-wrapper">
+          <input type="file" id="medicalFile" name="MedicalFilePath" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+          <label for="medicalFile" class="btn btn-upload">
+            <i class="fas fa-upload"></i> Upload File
+          </label>
+          <div class="file-info" id="fileInfo" style="display: none;">
+            <span id="fileName" class="file-name"></span>
+            <button type="button" class="file-remove" id="removeFile" title="Remove file">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div id="currentFile" style="font-size:13px; margin-top:8px; color:var(--text-light); display:none;">
+            Current file: <a id="currentFileLink" href="#" target="_blank"></a>
+          </div>
+        </div>
+        <p class="form-note">Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max 5MB)</p>
+        <div id="medicalInfoError" class="error"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="contactNo">Contact Number</label>
+        <input type="tel" id="contactNo" name="ContactNo" maxlength="18" placeholder="Optional" />
+        <div id="contactNoError" class="error"></div>
+      </div>
+      
+      <div class="form-group">
+        <label for="assignedCaregiver" class="required">Assigned Caregiver</label>
+        <select id="assignedCaregiver" name="AssignedCaregiver" required>
+          <option value="">Select a caregiver</option>
+        </select>
+        <div id="assignedCaregiverError" class="error"></div>
+      </div>
+      
+      <div id="responseMessage"></div>
+      <div class="form-buttons">
+        <button type="button" class="btn btn-cancel" onclick="window.location.href='residents.html'">Cancel</button>
+        <button type="submit" class="btn btn-submit">Update</button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Confirmation Modal -->
+  <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">Confirm Update</div>
+      <div class="modal-message">Are you sure you want to update this resident's information?</div>
+      <div class="modal-buttons">
+        <button id="cancelConfirm" class="modal-btn modal-btn-cancel">No</button>
+        <button id="confirmSubmit" class="modal-btn modal-btn-confirm">Yes</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('confirmationModal');
+  const cancelConfirmBtn = document.getElementById('cancelConfirm');
+  const confirmSubmitBtn = document.getElementById('confirmSubmit');
+  const form = document.getElementById('residentForm');
+  const responseMessage = document.getElementById('responseMessage');
+  const fileInput = document.getElementById('medicalFile');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileNameDisplay = document.getElementById('fileName');
+  const removeFileBtn = document.getElementById('removeFile');
+  const assignedCaregiverSelect = document.getElementById('assignedCaregiver');
+  const currentFileDiv = document.getElementById('currentFile');
+  const currentFileLink = document.getElementById('currentFileLink');
+  const fullname = document.getElementById('fullname');
+  const dateOfBirth = document.getElementById('dateOfBirth');
+  const contactNo = document.getElementById('contactNo');
+  let existingFilePath = null;
+
+  // Get resident ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const residentId = urlParams.get('id');
+  if (!residentId) {
+    alert('No resident selected for editing.');
+    window.location.href = 'residents.html';
+    return;
+  }
+
+  // Populate caregivers dropdown from the API
+  fetch('/api/caregivers')
+    .then(res => res.json())
+    .then(data => {
+      assignedCaregiverSelect.innerHTML = '<option value="">Select a caregiver</option>';
+      data.forEach(cg => {
+        if (cg.StaffNumber)
+          assignedCaregiverSelect.innerHTML += `<option value="${cg.StaffNumber}">${cg.StaffNumber}${cg.Fullname ? ' - ' + cg.Fullname : ''}</option>`;
+      });
+    });
+
+  // Fetch current resident data and populate form
+  fetch(`/api/residents/${residentId}`)
+    .then(res => res.json())
+    .then(data => {
+      fullname.value = data.Fullname || '';
+      dateOfBirth.value = data.DateOfBirth ? data.DateOfBirth.split('T')[0] : '';
+      contactNo.value = data.ContactNo || '';
+      // Set gender
+      if (data.Gender) {
+        const genderRadio = document.querySelector(`input[name="Gender"][value="${data.Gender}"]`);
+        if (genderRadio) genderRadio.checked = true;
+      }
+      // Set assigned caregiver (wait for caregivers to load)
+      const setCaregiver = () => {
+        assignedCaregiverSelect.value = data.AssignedCaregiver || '';
+      };
+      if (assignedCaregiverSelect.options.length > 1) setCaregiver();
+      else assignedCaregiverSelect.addEventListener('change', setCaregiver, { once: true });
+
+      // Show current file
+      if (data.MedicalFilePath) {
+        existingFilePath = data.MedicalFilePath;
+        const fileName = existingFilePath.split(/[\\/]/).pop();
+        currentFileLink.textContent = fileName;
+        currentFileLink.href = `/uploads/${fileName}`;
+        currentFileDiv.style.display = 'block';
+      }
+    })
+    .catch(() => {
+      alert('Failed to load resident data.');
+      window.location.href = 'residents.html';
+    });
+
+  // File upload display
+  fileInput.addEventListener('change', function() {
+    if (this.files && this.files.length > 0) {
+      fileNameDisplay.textContent = this.files[0].name;
+      fileInfo.style.display = 'flex';
+    } else {
+      clearFileSelection();
+    }
+  });
+
+  removeFileBtn.addEventListener('click', function() {
+    clearFileSelection();
+  });
+
+  function clearFileSelection() {
+    fileInput.value = '';
+    fileNameDisplay.textContent = '';
+    fileInfo.style.display = 'none';
+  }
+
+  function showModal() { modal.style.display = 'flex'; }
+  function hideModal() { modal.style.display = 'none'; }
+
+  function clearErrors() {
+    document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+  }
+
+  function validateForm() {
+    let isValid = true;
+    clearErrors();
+
+    if (!fullname.value.trim()) {
+      document.getElementById('fullnameError').textContent = 'Full name is required';
+      fullname.classList.add('input-error');
+      isValid = false;
+    }
+    if (!dateOfBirth.value) {
+      document.getElementById('dateOfBirthError').textContent = 'Date of birth is required';
+      dateOfBirth.classList.add('input-error');
+      isValid = false;
+    } else {
+      const dob = new Date(dateOfBirth.value);
+      const today = new Date();
+      if (dob > today) {
+        document.getElementById('dateOfBirthError').textContent = 'Date cannot be in the future';
+        dateOfBirth.classList.add('input-error');
+        isValid = false;
+      }
+    }
+    const gender = document.querySelector('input[name="Gender"]:checked');
+    if (!gender) {
+      document.getElementById('genderError').textContent = 'Please select a gender';
+      isValid = false;
+    }
+    // File is NOT required for update, but if present must be valid
+    if (fileInput.files && fileInput.files.length > 0) {
+      const fileSize = fileInput.files[0].size / 1024 / 1024;
+      if (fileSize > 5) {
+        document.getElementById('medicalInfoError').textContent = 'File size must be less than 5MB';
+        isValid = false;
+      }
+    }
+    if (!assignedCaregiverSelect.value) {
+      document.getElementById('assignedCaregiverError').textContent = 'Assigned caregiver is required';
+      assignedCaregiverSelect.classList.add('input-error');
+      isValid = false;
+    }
+    return isValid;
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validateForm()) return;
+    showModal();
+  });
+
+  confirmSubmitBtn.addEventListener('click', async function() {
+    hideModal();
+    const formData = new FormData();
+    formData.append('Fullname', fullname.value.trim());
+    formData.append('DateOfBirth', dateOfBirth.value);
+    formData.append('Gender', document.querySelector('input[name="Gender"]:checked').value);
+    formData.append('ContactNo', contactNo.value.trim() || '');
+    formData.append('AssignedCaregiver', assignedCaregiverSelect.value);
+
+    // Add file (optional)
+    if (fileInput.files && fileInput.files.length > 0) {
+      formData.append('MedicalFilePath', fileInput.files[0]);
+    }
+
+    try {
+      responseMessage.textContent = 'Processing...';
+      responseMessage.style.color = 'var(--text-medium)';
+      const response = await fetch(`/api/residents/${residentId}`, {
+        method: 'PUT',
+        body: formData
+      });
+      const result = await response.json();
+      if (response.ok) {
+        responseMessage.textContent = 'Resident updated successfully!';
+        responseMessage.style.color = 'var(--primary)';
+        setTimeout(() => {
+          window.location.href = 'residents.html';
+        }, 1200);
+      } else {
+        responseMessage.textContent = result.message || 'Update failed. Please try again.';
+        responseMessage.style.color = 'var(--error)';
+        if (result.errors) {
+          for (const [field, message] of Object.entries(result.errors)) {
+            const errorElement = document.getElementById(`${field}Error`);
+            if (errorElement) {
+              errorElement.textContent = message;
+              const inputElement = document.getElementById(field);
+              if (inputElement) inputElement.classList.add('input-error');
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      responseMessage.textContent = 'Network error. Please check your connection and try again.';
+      responseMessage.style.color = 'var(--error)';
+    }
+  });
+
+  cancelConfirmBtn.addEventListener('click', hideModal);
+
+  // Set maximum date to today for date of birth
+  const today = new Date().toISOString().split('T')[0];
+  dateOfBirth.setAttribute('max', today);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VitalHaven Settings</title>
+  <style>
+    :root {
+      --primary-color: #4c7c2d;
+      --primary-light: #cfe7a8;
+      --primary-lighter: #eef3cd;
+      --secondary-color: #f6f8e3;
+      --background-color: #fefbf6;
+      --card-color: #fefee5;
+      --text-dark: #333;
+      --text-light: #555;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #dff5e1 0%, #f7f2eb 50%, #d0e0d0 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .wrapper {
+      width: 1100px;
+      max-width: 100%;
+      background-color: var(--card-color);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      min-height: 80vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: var(--secondary-color);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: width 0.3s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 12px;
+    }
+
+    .logo-container img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo span:first-child {
+      color: var(--primary-color);
+      font-weight: 800;
+    }
+
+    .logo span:last-child {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .menu-item {
+      margin: 8px 0;
+      font-size: 15px;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 15px;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .menu-item.active::after {
+      content: '';
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+    }
+
+    .menu-item span:first-child {
+      font-weight: 600;
+    }
+
+    .menu-item span:last-child {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .menu-item:hover span:last-child,
+    .menu-item.active span:last-child {
+      color: inherit;
+    }
+
+    .spacer {
+      height: 20px;
+    }
+
+    .bottom-icons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .bottom-icons img {
+      width: 80px;
+      height: auto;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .bottom-icons img:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 30px 35px;
+      background-color: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 80vh;
+      border-radius: 0 var(--border-radius-lg) var(--border-radius-lg) 0;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+    }
+
+    .top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .top-left h1 {
+      margin: 0;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .top-left h1 img {
+      height: 42px;
+      width: auto;
+    }
+
+    .search-container {
+      position: relative;
+      flex-grow: 1;
+      max-width: 300px;
+      margin-right: 20px;
+    }
+
+    .search {
+      background: var(--primary-lighter);
+      border: none;
+      padding: 10px 15px 10px 40px;
+      border-radius: var(--border-radius-sm);
+      width: 100%;
+      font-size: 14px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .profile-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid var(--primary-light);
+    }
+
+    .profile-img:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+    }
+
+    /* Admin Dropdown */
+    .admin-dropdown {
+      position: relative;
+      display: inline-block;
+      font-size: 15px;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .admin-name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .admin-name strong {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .admin-dropdown .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 35px;
+      left: 0;
+      background-color: white;
+      box-shadow: var(--shadow-md);
+      border-radius: var(--border-radius-sm);
+      min-width: 160px;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .admin-dropdown .dropdown-menu.show {
+      display: block;
+    }
+
+    .admin-dropdown .dropdown-menu a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: var(--text-dark);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .admin-dropdown .dropdown-menu a:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    /* Settings Form */
+    form.settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      max-width: 700px;
+      margin-top: 20px;
+    }
+
+    form.settings-form section {
+      background: var(--primary-lighter);
+      padding: 20px 25px;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    form.settings-form section:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    form.settings-form h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 20px;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-light);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    form.settings-form h2::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 8px 0;
+      border-radius: var(--border-radius-sm);
+    }
+
+    label:hover {
+      background-color: rgba(207, 231, 168, 0.3);
+    }
+
+    label input[type="checkbox"],
+    label input[type="radio"] {
+      margin-right: 12px;
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary-color);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid var(--primary-light);
+      border-radius: var(--border-radius-sm);
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+      background-color: white;
+      margin-bottom: 15px;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(123, 167, 87, 0.2);
+    }
+
+    button.save-btn {
+      align-self: flex-start;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-sm);
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button.save-btn:hover {
+      background-color: #3e6a25;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    button.save-btn:active {
+      transform: translateY(0);
+    }
+
+    .activity-log {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 10px;
+      background: white;
+      border-radius: var(--border-radius-sm);
+      padding: 15px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .activity-log ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .activity-log li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+    }
+
+    .activity-log li:last-child {
+      border-bottom: none;
+    }
+
+    .activity-log li::before {
+      content: '•';
+      color: var(--primary-color);
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .loader-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .loader-gif {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .loader-text {
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .wrapper {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 15px;
+      }
+
+      .logo-container {
+        margin-bottom: 15px;
+      }
+
+      .menu-item {
+        margin: 5px 0;
+        padding: 8px 10px;
+      }
+
+      .main {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .search-container {
+        max-width: 100%;
+        width: 100%;
+        margin-right: 0;
+        order: 2;
+      }
+
+      .profile-container {
+        order: 1;
+        align-self: flex-end;
+      }
+    }
+
+    @media (max-width: 576px) {
+      body {
+        padding: 20px;
+      }
+
+      button.save-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loader-overlay" id="loaderOverlay">
+    <img src="images/blob.gif" alt="Loading..." class="loader-gif" />
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <div class="wrapper">
+    <div class="sidebar">
+      <div>
+        <div class="logo-container">
+          <img src="images/logo.png" alt="Logo">
+          <div class="logo">
+            <span>Vital</span>
+            <span>Haven</span>
+          </div>
+        </div>
+
+        <a href="Overview.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Data</span>
+            <span>Overview</span>
+          </div>
+        </a>
+
+        <a href="CaregiverLogs.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Caregiver</span>
+            <span>Access Log</span>
+          </div>
+        </a>
+
+        <a href="Residents.html" id="residentLink" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Resident</span>
+            <span>Summary Panel</span>
+          </div>
+        </a>
+
+        <a href="Settings.html" style="text-decoration: none;">
+          <div class="menu-item active">
+            <span>Settings</span>
+          </div>
+        </a>
+
+        <div class="spacer"></div>
+
+        <a href="Log.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Logs</span>
+          </div>
+        </a>
+        
+        <a href="Inbox.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Inbox</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bottom-icons">
+        <img src="images/blob1.gif" alt="Blob Icon"/>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="top-bar">
+        <div class="top-left">
+          <div class="admin-dropdown">
+            <span class="admin-name">Hi <strong>Admin</strong> ▼</span>
+            <div class="dropdown-menu">
+              <a href="#" id="signOutLink">Sign Out</a>
+              <a href="profile.html">My Profile</a>
+              <a href="Settings.html">Settings</a>
+            </div>
+          </div>
+          <h1>Settings <img src="images/plant1.gif" alt="Plant"/></h1>
+        </div>
+        
+        <div class="profile-container">
+          <div class="search-container">
+            <i class="search-icon"></i>
+            <input class="search" type="text" placeholder="Search Settings..." />
+          </div>
+          <a href="profile.html"></a>
+        </div>
+      </div>
+
+      <!-- Settings Form -->
+      <form class="settings-form" onsubmit="event.preventDefault(); showLoader(); setTimeout(() => { alert('Settings saved successfully!'); hideLoader(); }, 1500);">
+        <!-- Notification Preferences -->
+        <section>
+          <h2>Notification Preferences</h2>
+          <label>
+            <input type="checkbox" checked />
+            Email Notifications
+          </label>
+          <label>
+            <input type="checkbox" />
+            SMS Notifications
+          </label>
+          <label>
+            <input type="checkbox" checked />
+            Push Notifications
+          </label>
+          <label>
+            <input type="checkbox" />
+            Newsletter Subscription
+          </label>
+          
+          <label style="margin-top: 15px;">
+            Notification Frequency
+            <select style="margin-top: 5px;">
+              <option>Immediately</option>
+              <option>Every hour</option>
+              <option>Daily summary</option>
+            </select>
+          </label>
+        </section>
+
+        <!-- Security Settings -->
+        <section>
+          <h2>Security Settings</h2>
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" placeholder="Enter current password" required />
+
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="Enter new password" required />
+
+          <label for="confirmPassword">Confirm New Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm new password" required />
+          
+          <label style="margin-top: 15px;">
+            <input type="checkbox" checked />
+            Enable Two-Factor Authentication
+          </label>
+        </section>
+
+        <!-- Appearance Settings -->
+        <section>
+          <h2>Appearance Settings</h2>
+          <label>
+            <input type="checkbox" id="darkModeCheckbox" />
+            Enable Dark Mode
+          </label>
+          
+          <label style="margin-top: 15px;">
+            Theme Color
+            <select style="margin-top: 5px;">
+              <option>Green (Default)</option>
+              <option>Blue</option>
+              <option>Purple</option>
+              <option>Custom</option>
+            </select>
+          </label>
+          
+          <label style="margin-top: 15px;">
+            Font Size
+            <select style="margin-top: 5px;">
+              <option>Small</option>
+              <option selected>Medium</option>
+              <option>Large</option>
+            </select>
+          </label>
+        </section>
+
+        <!-- System Preferences -->
+        <section>
+          <h2>System Preferences</h2>
+          <label>
+            <input type="checkbox" checked />
+            Enable Auto Updates
+          </label>
+          <label>
+            <input type="checkbox" />
+            Enable Beta Features
+          </label>
+          <label>
+            <input type="checkbox" checked />
+            Send Usage Analytics
+          </label>
+          
+          <label style="margin-top: 15px;">
+            Data Backup Frequency
+            <select style="margin-top: 5px;">
+              <option>Daily</option>
+              <option selected>Weekly</option>
+              <option>Monthly</option>
+            </select>
+          </label>
+        </section>
+
+        <button type="submit" class="save-btn">Save Settings</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced loader functions
+    function showLoader() {
+      document.getElementById('loaderOverlay').classList.add('show');
+    }
+    
+    function hideLoader() {
+      document.getElementById('loaderOverlay').classList.remove('show');
+    }
+
+    // Navigation with loader
+    document.querySelectorAll('a.menu-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetUrl = this.getAttribute('href');
+        showLoader();
+        setTimeout(() => {
+          window.location.href = targetUrl;
+        }, 800);
+      });
+    });
+
+    document.getElementById('residentLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetUrl = this.getAttribute('href');
+      showLoader();
+      setTimeout(() => {
+        window.location.href = targetUrl;
+      }, 800);
+    });
+
+    // Sign out functionality
+    document.getElementById('signOutLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      showLoader();
+      setTimeout(() => {
+        window.location.href = 'Login.html';
+      }, 800);
+    });
+
+    // Enhanced dropdown functionality
+    const adminDropdown = document.querySelector('.admin-dropdown');
+    const dropdownMenu = adminDropdown.querySelector('.dropdown-menu');
+
+    adminDropdown.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function () {
+      dropdownMenu.classList.remove('show');
+    });
+
+    // Add active state to settings form sections when clicked
+    document.querySelectorAll('form.settings-form section').forEach(section => {
+      section.addEventListener('click', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = 'var(--shadow-md)';
+        setTimeout(() => {
+          this.style.transform = '';
+          this.style.boxShadow = 'var(--shadow-sm)';
+        }, 200);
+      });
+    });
+
+    // Search functionality placeholder
+    document.querySelector('.search').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      if(searchTerm.length > 2) {
+        // In a real app, you would filter settings sections here
+        console.log('Searching for:', searchTerm);
+      }
+    });
+
+    // --------- DARK MODE TOGGLE LOGIC ---------
+    // Set dark mode CSS variables
+    function setDarkModeVars(enable) {
+      if (enable) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('vh-darkmode', '1');
+      } else {
+        document.body.classList.remove('dark-mode');
+        localStorage.removeItem('vh-darkmode');
+      }
+    }
+
+    // On load, set dark mode from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+      const darkModeCheckbox = document.getElementById('darkModeCheckbox');
+      // Check stored preference
+      if (localStorage.getItem('vh-darkmode') === '1') {
+        document.body.classList.add('dark-mode');
+        darkModeCheckbox.checked = true;
+      } else {
+        document.body.classList.remove('dark-mode');
+        darkModeCheckbox.checked = false;
+      }
+      darkModeCheckbox.addEventListener('change', function() {
+        setDarkModeVars(this.checked);
+      });
+    });
+  </script>
+  <style>
+    /* DARK MODE OVERRIDES */
+    body.dark-mode {
+      --primary-color: #90ee90;
+      --primary-light: #253c25;
+      --primary-lighter: #24282e;
+      --secondary-color: #23282d;
+      --background-color: #181c1f;
+      --card-color: #23282d;
+      --text-dark: #f1f1f1;
+      --text-light: #bbbbbb;
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.7);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.8);
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #181c1f 0%, #23282d 50%, #181c1f 100%);
+    }
+    body.dark-mode .wrapper,
+    body.dark-mode .main {
+      background: var(--background-color);
+      color: var(--text-dark);
+    }
+    body.dark-mode .sidebar {
+      background-color: var(--secondary-color);
+    }
+    body.dark-mode .logo span:last-child {
+      color: var(--text-light);
+    }
+    body.dark-mode .menu-item {
+      color: var(--text-dark);
+    }
+    body.dark-mode .menu-item.active,
+    body.dark-mode .menu-item:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+    body.dark-mode .menu-item.active::after {
+      background-color: var(--primary-color);
+    }
+    body.dark-mode .main {
+      background-color: var(--background-color);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .search,
+    body.dark-mode input[type="text"],
+    body.dark-mode input[type="password"],
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background-color: #23282d;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    body.dark-mode .search:focus,
+    body.dark-mode input[type="text"]:focus,
+    body.dark-mode input[type="password"]:focus,
+    body.dark-mode select:focus,
+    body.dark-mode textarea:focus {
+      border-color: #90ee90;
+      box-shadow: 0 0 0 2px #253c25;
+    }
+    body.dark-mode .settings-form section {
+      background: #24282e;
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .settings-form section:hover {
+      box-shadow: var(--shadow-lg);
+    }
+    body.dark-mode label {
+      color: var(--text-dark);
+      background: none;
+    }
+    body.dark-mode .activity-log {
+      background: #23282d;
+      color: #bbb;
+    }
+    body.dark-mode .activity-log ul {
+      color: #bbb;
+    }
+    body.dark-mode .loader-overlay {
+      background-color: rgba(24, 28, 31, 0.95);
+    }
+    body.dark-mode .loader-text {
+      color: #90ee90;
+    }
+    body.dark-mode .bottom-icons img {
+      filter: brightness(0.7);
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VitalHaven - Medication Tracker</title>
+  <style>
+    :root {
+      --primary-color: #4c7c2d;
+      --primary-light: #cfe7a8;
+      --primary-lighter: #eef3cd;
+      --secondary-color: #f6f8e3;
+      --background-color: #fefbf6;
+      --card-color: #fefee5;
+      --text-dark: #333;
+      --text-light: #555;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --transition: all 0.3s ease;
+      --status-pending: #ff9800;
+      --status-completed: #4caf50;
+      --status-missed: #f44336;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #dff5e1 0%, #f7f2eb 50%, #d0e0d0 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    .wrapper {
+      width: 1100px;
+      max-width: 100%;
+      background-color: var(--card-color);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      min-height: 80vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: var(--secondary-color);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: width 0.3s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 12px;
+    }
+
+    .logo-container img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo span:first-child {
+      color: var(--primary-color);
+      font-weight: 800;
+    }
+
+    .logo span:last-child {
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .menu-item {
+      margin: 8px 0;
+      font-size: 15px;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 15px;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .menu-item span:first-child {
+      font-weight: 600;
+    }
+
+    .menu-item span:last-child {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .menu-item:hover span:last-child,
+    .menu-item.active span:last-child {
+      color: inherit;
+    }
+
+    .spacer {
+      height: 20px;
+    }
+
+    .bottom-icons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .bottom-icons img {
+      width: 80px;
+      height: auto;
+      opacity: 0.8;
+      transition: var(--transition);
+    }
+
+    .bottom-icons img:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 30px 35px;
+      background-color: var(--background-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+    }
+
+    .top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-grow: 1;
+    }
+
+    .top-left h1 {
+      margin: 0;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .top-left h1 img {
+      height: 42px;
+      width: auto;
+    }
+
+    .search-container {
+      position: relative;
+      flex-grow: 1;
+      max-width: 300px;
+    }
+
+    .search {
+      background: var(--primary-lighter);
+      border: none;
+      padding: 10px 15px 10px 40px;
+      border-radius: var(--border-radius-sm);
+      width: 100%;
+      font-size: 14px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid var(--primary-light);
+    }
+
+    .profile img:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+    }
+
+    /* Table Styles */
+    .table-container {
+      margin-top: 25px;
+      background-color: var(--primary-lighter);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: var(--primary-light);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .table-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .table-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .medication-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .medication-table thead tr {
+      background-color: var(--primary-light);
+    }
+
+    .medication-table th {
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 14px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .medication-table td {
+      padding: 12px 15px;
+      text-align: left;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .medication-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .medication-table tbody tr:hover {
+      background-color: rgba(207, 231, 168, 0.3);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .status-pending {
+      background-color: rgba(255, 152, 0, 0.1);
+      color: var(--status-pending);
+    }
+
+    .status-completed {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--status-completed);
+    }
+
+    .status-missed {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--status-missed);
+    }
+
+    /* Priority Indicators */
+    .priority-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .priority-high {
+      background-color: #f44336;
+    }
+
+    .priority-medium {
+      background-color: #ff9800;
+    }
+
+    .priority-low {
+      background-color: #4caf50;
+    }
+
+    /* Checkbox Styles */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-custom {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--primary-color);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .checkbox-custom.checked {
+      background-color: var(--primary-color);
+    }
+
+    .checkbox-custom i {
+      color: white;
+      font-size: 12px;
+      display: none;
+    }
+
+    .checkbox-custom.checked i {
+      display: block;
+    }
+
+    /* Button Styles */
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: var(--border-radius-sm);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      border: none;
+      box-shadow: var(--shadow-sm);
+      gap: 6px;
+    }
+
+    .action-btn i {
+      font-size: 14px;
+    }
+
+    .action-btn.add {
+      background-color: var(--primary-color);
+    }
+
+    .action-btn.edit {
+      background-color: #5a8a3a;
+    }
+
+    .action-btn.delete {
+      background-color: #d9534f;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      opacity: 0.9;
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Time Indicators */
+    .time-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .time-indicator i {
+      color: var(--text-light);
+      font-size: 12px;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      margin: 5px 0;
+      height: 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 10px;
+      background-color: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-lg);
+      width: 90%;
+      max-width: 500px;
+      padding: 25px;
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .modal-overlay.show .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--primary-color);
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius-sm);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .select-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 1em;
+    }
+
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .loader-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .loader-gif {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .loader-text {
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .wrapper {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 15px;
+      }
+
+      .logo-container {
+        margin-bottom: 15px;
+      }
+
+      .menu-item {
+        margin: 5px 0;
+        padding: 8px 10px;
+      }
+
+      .main {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .search-container {
+        max-width: 100%;
+        width: 100%;
+        order: 2;
+      }
+
+      .profile {
+        order: 1;
+        align-self: flex-end;
+      }
+
+      .medication-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .table-controls {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      body {
+        padding: 20px;
+      }
+
+      .action-btn {
+        width: 100%;
+        padding: 10px;
+      }
+
+      .modal {
+        width: 95%;
+        padding: 15px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Loader Overlay -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <img src="images/blob.gif" alt="Loading..." class="loader-gif" />
+    <div class="loader-text">Loading...</div>
+  </div>
+
+  <!-- Medication Modal -->
+  <div class="modal-overlay" id="medicationModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Medication Details</div>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Resident</label>
+          <select class="form-control" id="modalResidentSelect"></select>
+        </div>
+        
+        <div class="form-group">
+          <label>Medication Name</label>
+          <input type="text" class="form-control" id="medicationName" placeholder="Enter medication name">
+        </div>
+        
+        <div class="form-group">
+          <label>Dosage</label>
+          <input type="text" class="form-control" id="medicationDosage" placeholder="e.g. 10mg">
+        </div>
+        
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" class="form-control" id="medicationTime">
+        </div>
+        
+        <div class="form-group">
+          <label>Frequency</label>
+          <select class="form-control select-control" id="medicationFrequency">
+            <option value="daily">Daily</option>
+            <option value="bid">Twice Daily (BID)</option>
+            <option value="tid">Three Times Daily (TID)</option>
+            <option value="qid">Four Times Daily (QID)</option>
+            <option value="weekly">Weekly</option>
+            <option value="prn">As Needed (PRN)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Priority</label>
+          <select class="form-control select-control" id="medicationPriority">
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        
+        <div class="checkbox-container" style="margin-top: 15px;">
+          <div class="checkbox-custom" id="modalCheckbox">
+            <i class="fas fa-check"></i>
+          </div>
+          <label>Mark as completed</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn delete" id="cancelMedication">Cancel</button>
+        <button class="action-btn add" id="saveMedication">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <div class="sidebar">
+      <div>
+        <div class="logo-container">
+          <img src="images/logo.png" alt="Logo">
+          <div class="logo">
+            <span>Vital</span>
+            <span>Haven</span>
+          </div>
+        </div>
+
+        <a href="cgdashboard.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Caregiver</span>
+            <span>Dashboard</span>
+          </div>
+        </a>
+        
+        <a href="assignedres.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Assigned</span>
+            <span>Residents</span>
+          </div>
+        </a>
+
+        <div class="menu-item active">
+          <span>Medication</span>
+          <span>Tracker</span>
+        </div>
+
+        <a href="assesment.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Health</span>
+            <span>Assessment Report</span>
+          </div>
+        </a>
+
+        <div class="spacer"></div>
+
+        <a href="settingsv2.html" class="menu-link" style="text-decoration: none;">
+          <div class="menu-item">
+            <span>Settings</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="bottom-icons">
+        <img src="images/blob1.gif" alt="Blob Icon"/>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="top-bar">
+        <div class="top-left">
+          <h1>Medication Tracker <img src="images/plant1.gif" alt="Plant"/></h1>
+          <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input class="search" type="text" placeholder="Search medications..." id="searchInput"/>
+          </div>
+        </div>
+        <div class="profile">
+          <a href="profile.html">
+            <img src="images/profile.png" alt="Profile"/>
+          </a>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div class="table-title">Today's Medications</div>
+          <div class="table-controls">
+            <button class="action-btn add" id="addMedication">
+              <i class="fas fa-plus"></i> Add Medication
+            </button>
+            <button class="action-btn edit" id="refreshMedications">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+        </div>
+        
+        <div id="tableArea">
+          <table class="medication-table">
+            <thead>
+              <tr>
+                <th>Resident</th>
+                <th>Medication</th>
+                <th>Dosage</th>
+                <th>Time</th>
+                <th>Frequency</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="medicationsTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 30px;">Loading medications...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DARK MODE LOADER -->
+  <script>
+    // On load, apply dark mode if enabled in localStorage
+    if (localStorage.getItem('vh-darkmode') === '1') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+  <style>
+    /* DARK MODE OVERRIDES */
+    body.dark-mode {
+      --primary-color: #90ee90;
+      --primary-light: #253c25;
+      --primary-lighter: #24282e;
+      --secondary-color: #23282d;
+      --background-color: #181c1f;
+      --card-color: #23282d;
+      --text-dark: #f1f1f1;
+      --text-light: #bbbbbb;
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.7);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.8);
+      --status-pending: #ffb84d;
+      --status-completed: #aaffaa;
+      --status-missed: #ff7d7d;
+    }
+    body.dark-mode {
+      background: linear-gradient(135deg, #181c1f 0%, #23282d 50%, #181c1f 100%);
+    }
+    body.dark-mode .wrapper,
+    body.dark-mode .main {
+      background: var(--background-color);
+      color: var(--text-dark);
+    }
+    body.dark-mode .sidebar {
+      background-color: var(--secondary-color);
+    }
+    body.dark-mode .logo span:last-child {
+      color: var(--text-light);
+    }
+    body.dark-mode .menu-item {
+      color: var(--text-dark);
+    }
+    body.dark-mode .menu-item.active,
+    body.dark-mode .menu-item:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+    body.dark-mode .menu-item.active::after {
+      background-color: var(--primary-color);
+    }
+    body.dark-mode .main {
+      background-color: var(--background-color);
+      color: var(--text-dark);
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .search,
+    body.dark-mode input[type="text"],
+    body.dark-mode input[type="password"],
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background-color: #23282d;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    body.dark-mode .search:focus,
+    body.dark-mode input[type="text"]:focus,
+    body.dark-mode input[type="password"]:focus,
+    body.dark-mode select:focus,
+    body.dark-mode textarea:focus {
+      border-color: #90ee90;
+      box-shadow: 0 0 0 2px #253c25;
+    }
+    body.dark-mode .table-container {
+      background: #24282e;
+      box-shadow: var(--shadow-md);
+    }
+    body.dark-mode .medication-table {
+      background: #23282d;
+      color: var(--text-dark);
+    }
+    body.dark-mode .medication-table th {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-light);
+    }
+    body.dark-mode .medication-table td {
+      border-bottom: 1px solid #333;
+    }
+    body.dark-mode .medication-table tbody tr:hover {
+      background-color: #253c25;
+    }
+    body.dark-mode .status-badge.status-pending {
+      background-color: rgba(255, 184, 77, 0.15);
+      color: #ffb84d;
+    }
+    body.dark-mode .status-badge.status-completed {
+      background-color: rgba(170, 255, 170, 0.2);
+      color: #aaffaa;
+    }
+    body.dark-mode .status-badge.status-missed {
+      background-color: rgba(255, 125, 125, 0.15);
+      color: #ff7d7d;
+    }
+    body.dark-mode .priority-indicator.priority-high {
+      background-color: #ff7d7d;
+    }
+    body.dark-mode .priority-indicator.priority-medium {
+      background-color: #ffb84d;
+    }
+    body.dark-mode .priority-indicator.priority-low {
+      background-color: #aaffaa;
+    }
+    body.dark-mode .modal {
+      background: #23282d;
+      color: var(--text-dark);
+      box-shadow: var(--shadow-lg);
+    }
+    body.dark-mode .modal-title {
+      color: #90ee90;
+    }
+    body.dark-mode .modal-close {
+      color: #bbbbbb;
+    }
+    body.dark-mode .modal-close:hover {
+      color: #90ee90;
+    }
+    body.dark-mode .form-control,
+    body.dark-mode .select-control {
+      background-color: #23282d;
+      color: #f1f1f1;
+      border: 1px solid #444;
+    }
+    body.dark-mode .form-control:focus,
+    body.dark-mode .select-control:focus {
+      border-color: #90ee90;
+      box-shadow: 0 0 0 2px #253c25;
+    }
+    body.dark-mode .loader-overlay {
+      background-color: rgba(24, 28, 31, 0.95);
+    }
+    body.dark-mode .loader-text {
+      color: #90ee90;
+    }
+    body.dark-mode .bottom-icons img {
+      filter: brightness(0.7);
+    }
+  </style>
+
+  <script>
+    // --- StaffNumber: Ensure StaffNumber is set from login/session ---
+    const StaffNumber = localStorage.getItem('StaffNumber');
+    if (!StaffNumber) {
+      alert('Staff Number not found. Please log in again.');
+      window.location.href = 'login.html';
+    }
+
+    let assignedResidents = [];
+    let medicationsData = [];
+    let currentMedication = null;
+    let medUpdateTimer = null;
+
+    // DOM elements
+    const medicationsTableBody = document.getElementById('medicationsTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const refreshBtn = document.getElementById('refreshMedications');
+    const addMedicationBtn = document.getElementById('addMedication');
+    const medicationModal = document.getElementById('medicationModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelMedicationBtn = document.getElementById('cancelMedication');
+    const saveMedicationBtn = document.getElementById('saveMedication');
+    const modalResidentSelect = document.getElementById('modalResidentSelect');
+    const medicationNameInput = document.getElementById('medicationName');
+    const medicationDosageInput = document.getElementById('medicationDosage');
+    const medicationTimeInput = document.getElementById('medicationTime');
+    const medicationFrequencyInput = document.getElementById('medicationFrequency');
+    const medicationPriorityInput = document.getElementById('medicationPriority');
+    const modalCheckbox = document.getElementById('modalCheckbox');
+
+    function formatTime12h(t) {
+      if (!t) return '';
+      if (t.includes('T')) t = t.split('T')[1];
+      t = t.replace('Z', '').split('.')[0];
+      let [hour, minute] = t.split(':');
+      hour = parseInt(hour, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      let h = hour % 12;
+      if (h === 0) h = 12;
+      return `${h}:${minute.padStart(2, '0')}${ampm}`;
+    }
+
+    async function fetchAssignedResidents() {
+      try {
+        const res = await fetch(`/api/residents?AssignedCaregiver=${encodeURIComponent(StaffNumber)}`);
+        if (!res.ok) throw new Error("Failed to fetch residents");
+        const data = await res.json();
+        assignedResidents = data;
+        renderResidentOptions();
+      } catch (e) {
+        assignedResidents = [];
+        renderResidentOptions();
+      }
+    }
+
+    function renderResidentOptions() {
+      modalResidentSelect.innerHTML = "";
+      if (!assignedResidents.length) {
+        modalResidentSelect.innerHTML = `<option value="">No assigned residents</option>`;
+        return;
+      }
+      assignedResidents.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.ResidentID;
+        opt.textContent = r.Fullname;
+        modalResidentSelect.appendChild(opt);
+      });
+    }
+
+    async function fetchMedications(filterText = "") {
+      let url = `/api/medications?staffNumber=${encodeURIComponent(StaffNumber)}`;
+      if (filterText) url += `&q=${encodeURIComponent(filterText)}`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch medications");
+        medicationsData = await res.json();
+      } catch (e) {
+        medicationsData = [];
+      }
+      renderMedicationsTable();
+      startMedUpdateTimer();
+    }
+
+    function renderMedicationsTable() {
+      if (!Array.isArray(medicationsData) || !medicationsData.length) {
+        medicationsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;">No medications scheduled for today.</td></tr>';
+        return;
+      }
+      let tableHtml = '';
+      const now = new Date();
+      medicationsData.forEach(med => {
+        let medTimeStr = med.Time;
+        let displayTime = formatTime12h(medTimeStr);
+
+        let [h, m] = (medTimeStr.includes('T') ? medTimeStr.split('T')[1] : medTimeStr).replace('Z','').split(':');
+        h = parseInt(h, 10);
+        m = parseInt(m, 10);
+        const medTime = new Date(now);
+        medTime.setHours(h, m, 0, 0);
+
+        let medStatus = '';
+        if (med.LastAdministered) {
+          medStatus = 'completed';
+        } else if (now >= medTime) {
+          medStatus = 'due';
+        } else {
+          medStatus = 'pending';
+        }
+
+        let statusLabel = '';
+        if (medStatus === 'completed') {
+          statusLabel = `<span class="time-indicator"><i class="fas fa-check-circle"></i> Administered at ${med.LastAdministered ? new Date(med.LastAdministered).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true}) : displayTime}</span>`;
+        } else if (medStatus === 'due') {
+          statusLabel = `<span class="time-indicator"><i class="fas fa-bell"></i> Due</span>`;
+        } else {
+          statusLabel = `<span class="time-indicator"><i class="fas fa-clock"></i> Pending</span>`;
+        }
+
+        tableHtml += `
+          <tr data-id="${med.MedicationID}">
+            <td>${med.Fullname || ''}</td>
+            <td>${med.MedicationName}</td>
+            <td>${med.Dosage}</td>
+            <td>${displayTime}</td>
+            <td>${med.Frequency ? med.Frequency.toUpperCase() : ''}</td>
+            <td>
+              <div class="status-badge status-${medStatus}">${medStatus}</div>
+              ${statusLabel}
+              <div class="priority-indicator priority-${med.Priority}"></div>
+            </td>
+          </tr>`;
+      });
+      medicationsTableBody.innerHTML = tableHtml;
+      addTableRowEventListeners();
+    }
+
+    function startMedUpdateTimer() {
+      if (medUpdateTimer) clearInterval(medUpdateTimer);
+      medUpdateTimer = setInterval(renderMedicationsTable, 60 * 1000);
+    }
+
+    function addTableRowEventListeners() {
+      const rows = medicationsTableBody.querySelectorAll('tr');
+      rows.forEach(row => {
+        row.addEventListener('click', () => {
+          const medicationId = row.getAttribute('data-id');
+          currentMedication = medicationsData.find(m => m.MedicationID == medicationId);
+          openMedicationModal(currentMedication);
+        });
+      });
+    }
+
+    function openMedicationModal(medication = null) {
+      if (medication) {
+        currentMedication = medication;
+        modalResidentSelect.value = medication.ResidentID;
+        medicationNameInput.value = medication.MedicationName;
+        medicationDosageInput.value = medication.Dosage;
+        medicationTimeInput.value = (medication.Time.includes('T') ? medication.Time.split('T')[1].slice(0,5) : medication.Time.slice(0,5));
+        medicationFrequencyInput.value = medication.Frequency;
+        medicationPriorityInput.value = medication.Priority;
+        modalCheckbox.classList.toggle('checked', !!medication.LastAdministered);
+        document.querySelector('.modal-title').textContent = 'Edit Medication';
+        saveMedicationBtn.textContent = 'Update';
+      } else {
+        currentMedication = null;
+        modalResidentSelect.value = "";
+        medicationNameInput.value = '';
+        medicationDosageInput.value = '';
+        medicationTimeInput.value = '';
+        medicationFrequencyInput.value = 'daily';
+        medicationPriorityInput.value = 'medium';
+        modalCheckbox.classList.remove('checked');
+        document.querySelector('.modal-title').textContent = 'Add Medication';
+        saveMedicationBtn.textContent = 'Save';
+      }
+      medicationModal.classList.add('show');
+    }
+
+    function closeMedicationModal() {
+      medicationModal.classList.remove('show');
+      currentMedication = null;
+    }
+
+    async function saveMedication() {
+      const ResidentID = modalResidentSelect.value;
+      const MedicationName = medicationNameInput.value.trim();
+      const Dosage = medicationDosageInput.value.trim();
+      const Time = medicationTimeInput.value;
+      const Frequency = medicationFrequencyInput.value;
+      const Priority = medicationPriorityInput.value;
+      const isCompleted = modalCheckbox.classList.contains('checked');
+      const LastAdministered = isCompleted ? new Date().toISOString() : null;
+
+      if (!ResidentID || !MedicationName || !Dosage || !Time) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const payload = {
+        ResidentID,
+        StaffNumber,
+        MedicationName,
+        Dosage,
+        Time,
+        Frequency,
+        Priority,
+        LastAdministered
+      };
+
+      if (currentMedication && currentMedication.MedicationID) {
+        const res = await fetch(`/api/medications/${currentMedication.MedicationID}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          await fetchMedications();
+          closeMedicationModal();
+        } else {
+          alert("Failed to update medication.");
+        }
+      } else {
+        const res = await fetch("/api/medications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          await fetchMedications();
+          closeMedicationModal();
+        } else {
+          alert("Failed to add medication.");
+        }
+      }
+    }
+
+    modalCheckbox.addEventListener('click', () => {
+      modalCheckbox.classList.toggle('checked');
+    });
+
+    closeModalBtn.addEventListener('click', closeMedicationModal);
+    cancelMedicationBtn.addEventListener('click', closeMedicationModal);
+    saveMedicationBtn.addEventListener('click', saveMedication);
+    refreshBtn.addEventListener('click', () => fetchMedications(searchInput.value));
+    addMedicationBtn.addEventListener('click', () => openMedicationModal());
+    searchInput.addEventListener('input', () => fetchMedications(searchInput.value));
+
+    medicationModal.addEventListener('click', (e) => {
+      if (e.target === medicationModal) closeMedicationModal();
+    });
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Dark mode loader
+      if (localStorage.getItem('vh-darkmode') === '1') {
+        document.body.classList.add('dark-mode');
+      }
+      await fetchAssignedResidents();
+      await fetchMedications();
+      setTimeout(() => {
+        document.getElementById('loaderOverlay').classList.remove('show');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
