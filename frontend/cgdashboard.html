@@ -1066,7 +1066,7 @@
       localStorage.removeItem('StaffNumber');
       document.getElementById('loaderOverlay').classList.add('show');
       setTimeout(() => {
-        window.location.href = 'Login.html';
+        window.location.href = 'index.html';
       }, 800);
     });
     document.getElementById('tasksButton').addEventListener('click', function () {
@@ -1095,7 +1095,7 @@
     document.addEventListener('DOMContentLoaded', async function() {
       const StaffNumber = getLoggedInStaffNumber();
       if (!StaffNumber) {
-        window.location.href = 'Login.html';
+        window.location.href = 'index.html';
         return;
       }
       // DARK MODE SYNC (optional: if you want to add a toggle, follow settingsv2.html)
@@ -1156,7 +1156,7 @@
         // Set notification badge to number of ResidentID that match the AssignedCaregiver
         document.getElementById('notificationBadge').textContent = residents.length;
       } catch (e) {
-        window.location.href = 'Login.html';
+        window.location.href = 'index.html';
       }
     });
   </script>

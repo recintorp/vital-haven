@@ -13,7 +13,7 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Print __dirname and static path to help debug directory issues
+// Debug: Print __dirname and static path
 console.log('__dirname:', __dirname);
 
 const staticDir = path.join(__dirname, '..', 'frontend');
@@ -24,33 +24,31 @@ if (!fs.existsSync(staticDir)) {
     process.exit(1);
 }
 
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Created uploads directory:', uploadsDir);
+}
+
 app.use(express.json());
 
-// Serve frontend statically
-app.use(express.static(staticDir));
+// (Optional) Enable CORS if needed
+// const cors = require('cors');
+// app.use(cors());
 
-// Serve uploads directory statically for file downloads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(staticDir)); // Serve frontend statically
+app.use('/uploads', express.static(uploadsDir)); // Serve uploads directory
 
-// API route for caregivers
+// API routes
 app.use('/api/caregivers', caregiversRouter);
-
-// API route for emails
 app.use('/api/emails', emailsRouter);
-
-// API route for residents
 app.use('/api/residents', residentsRouter);
-
-// API route for assessments
 app.use('/api/assessments', assessmentRouter);
-
-// API route for medications
 app.use('/api/medications', medicationsRouter);
-
-// API route for activity log
 app.use('/api/activity-log', activityLogRouter);
 
-// Simple DB test route (for debugging connection)
+// DB test route
 app.get('/test-db', async (req, res) => {
     try {
         const pool = await connectToDb();
@@ -61,7 +59,7 @@ app.get('/test-db', async (req, res) => {
     }
 });
 
-// Home route to test server
+// Home route
 app.get('/', (req, res) => {
     res.send('VitalHaven backend running. Try /form.html');
 });
